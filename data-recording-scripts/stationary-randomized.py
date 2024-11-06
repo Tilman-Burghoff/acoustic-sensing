@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import scipy
+import scipy.io.wavfile
 import os
 from jacktools.jacksignal import JackSignal
 
