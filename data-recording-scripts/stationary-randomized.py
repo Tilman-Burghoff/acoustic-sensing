@@ -3,6 +3,7 @@ import pandas as pd
 import scipy.io.wavfile
 import os
 from jacktools.jacksignal import JackSignal
+from ros_controller import ROSController
 
 
 class robotRecording:
@@ -20,8 +21,9 @@ class robotRecording:
 
         self.rng = np.random.default_rng(rng_seed)
 
-        # self.setup_ros()
+        self.ros_controller = ROSController()
         print("- ros setup complete")
+
         self.setup_jack()
         print("- jacktools setup complete")
         print("\n--- setup complete ---\n")
@@ -72,7 +74,9 @@ class robotRecording:
         for i in range(self.positions):
             joint_pos = self.get_random_joint_position()
             print(f"\nmoving robot to {np.round(joint_pos, 2)}")
-            # self.move_to_postition(joint_pos)
+
+            self.ros_controller.move_to_position(joint_pos)
+
             print("recording audio")
             self.record_sample(joint_pos)
             self.index += 1
