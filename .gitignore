@@ -1,3 +1,4 @@
 .vscode/*
 .history/
 data-recording-scripts/data/
+*.wav
