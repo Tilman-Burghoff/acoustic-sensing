@@ -2,3 +2,4 @@
 .history/
 data-recording-scripts/data/
 *.wav
+*.npy
