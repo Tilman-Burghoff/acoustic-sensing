@@ -72,7 +72,7 @@ class robotRecording:
         for i in range(self.positions):
             joint_pos = self.get_random_joint_position()
             print(f"\nmoving robot to {np.round(joint_pos, 2)}")
-            # self.move_to_position(joint_pos)
+            self.move_to_position(joint_pos)
             print("recording audio")
             self.record_sample(joint_pos)
             self.index += 1

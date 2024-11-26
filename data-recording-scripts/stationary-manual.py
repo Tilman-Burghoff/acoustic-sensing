@@ -15,6 +15,11 @@ class robotRecording:
         print("- folder setup complete")
         self.notes = notes
 
+        self.joint_limits_max = np.array([1,1,1,1,1,1,1])
+        self.joint_limits_min = np.array([-1,-1,-1,-1,-1,-1,-1])
+
+        self.rng = np.random.default_rng(rng_seed)
+
         # TODO: Robot setup complete
 
         self.setup_jack()
