@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.io.wavfile
 import os
+import subprocess
 from jacktools.jacksignal import JackSignal
 
 
@@ -14,13 +15,8 @@ class robotRecording:
         print("- folder setup complete")
         self.notes = notes
 
-        self.joint_limits_max = np.array([1,1,1,1,1,1,1])
-        self.joint_limits_min = np.array([-1,-1,-1,-1,-1,-1,-1])
+        # TODO: Robot setup complete
 
-        self.rng = np.random.default_rng(rng_seed)
-
-        # self.setup_ros()
-        print("- ros setup complete")
         self.setup_jack()
         print("- jacktools setup complete")
         print("\n--- setup complete ---\n")
@@ -68,8 +64,33 @@ class robotRecording:
 
 
     def get_joint_position(self):
-        # TODO
-        return np.array([0,0,0,0,0,0,0])
+        
+        cpp_program = "../robot-control/get_current_joint_position"
+        robot_hostname = "111.111.1.1"
+
+        args = [cpp_program, robot_hostname]
+        
+        try:
+            result = subprocess.run(args,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE,
+                                    text=True, 
+                                    check=True)
+
+            output = result.stdout.strip()
+            if "Current joint positions:" in output:
+                output = output.replace("Current joint positions:", "").strip()
+
+            joint_positions = np.array(list(map(float, output.split())))
+            
+            return joint_positions
+        
+        except subprocess.CalledProcessError as e:
+            print(f"Error running C++ program: {e.stderr}")
+            return None
+
+
+
 
     def record(self):
         for i in range(self.positions):

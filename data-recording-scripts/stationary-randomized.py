@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.io.wavfile
 import os
+import subprocess
 from jacktools.jacksignal import JackSignal
 
 
@@ -19,8 +20,8 @@ class robotRecording:
 
         self.rng = np.random.default_rng(rng_seed)
 
-        # self.setup_ros()
-        print("- ros setup complete")
+        # TODO: Robot setup complete
+
         self.setup_jack()
         print("- jacktools setup complete")
         print("\n--- setup complete ---\n")
@@ -71,7 +72,7 @@ class robotRecording:
         for i in range(self.positions):
             joint_pos = self.get_random_joint_position()
             print(f"\nmoving robot to {np.round(joint_pos, 2)}")
-            # self.move_to_postition(joint_pos)
+            # self.move_to_position(joint_pos)
             print("recording audio")
             self.record_sample(joint_pos)
             self.index += 1
@@ -80,6 +81,24 @@ class robotRecording:
     def get_random_joint_position(self):
         return self.rng.random(7) * (self.joint_limits_max - self.joint_limits_min) + self.joint_limits_min
     
+    def move_to_position(self, joint_pos):
+        
+        cpp_program = "../robot-control/move_to_joint_position_motion"
+        robot_hostname = "111.111.1.1"
+
+        joint_args = [str(q) for q in joint_pos]
+        args = [cpp_program, robot_hostname] + joint_args
+
+        try:
+            result = subprocess.run(args, 
+                                    input="\n", 
+                                    text=True, 
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
+            
+        except subprocess.CalledProcessError as e:
+            print(f"Error running C++ program: {e.stderr}")
+        
 
     def record_sample(self, joint_pos):
         self.J.process()

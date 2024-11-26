@@ -2,3 +2,5 @@
 .history/
 data-recording-scripts/data/
 *.wav
+.robot-control/get_current_joint_position
+.robot-control/move_to_joint_position
