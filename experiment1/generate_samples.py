@@ -18,7 +18,7 @@ req_inputlength = split_into * outputlength
 print(f"Splitting each input into {split_into} datapoints, resulting in {output_datapoints} samples")
 
 X = np.zeros((output_datapoints, outputlength))
-y = np.zeros((output_datapoints, 1))
+y = np.zeros((output_datapoints, 2))
 
 for i, file in enumerate(inputfiles):
     sr, data = scipy.io.wavfile.read(inputpath + "/" + file)
@@ -29,9 +29,9 @@ for i, file in enumerate(inputfiles):
         raise(f"File {file} is not long enough")
     
     start_of_block = (len(data) - req_inputlength) // 2
-    data_block = data[start_of_block:start_of_block+req_inputlength, 0]
+    data_block = data[start_of_block:start_of_block+req_inputlength, 1]
     X[i*split_into:(i+1)*split_into, :] = data_block.reshape((split_into, outputlength))
-    y[i*split_into:(i+1)*split_into, :] = int(file[3])
+    y[i*split_into:(i+1)*split_into, :] = np.array([int(file[3]), int(file[5])])
 
 # normalize
 x = X / np.max(np.abs(X))
