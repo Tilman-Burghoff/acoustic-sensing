@@ -83,7 +83,7 @@ class robotRecording:
     
     def move_to_position(self, joint_pos):
         
-        cpp_program = "../robot-control/move_to_joint_position_motion"
+        cpp_program = "../robot-control/move_to_joint_position"
         robot_hostname = "111.111.1.1"
 
         joint_args = [str(q) for q in joint_pos]
