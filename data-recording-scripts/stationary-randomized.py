@@ -1,15 +1,14 @@
 import numpy as np
-import scipy.io.wavfile
 import os
 import subprocess
-from jacktools.jacksignal import JackSignal
+import audio_recorder
 
 
 class robotRecording:
-    def __init__(self, positions, rec_length_smpls, data_dir_path="./data", rng_seed=None, notes=""):
+    def __init__(self, positions, rec_length, data_dir_path="./data", rng_seed=None, notes=""):
         print("\n--- starting setup ---\n")
         self.positions = positions
-        self.rec_length_smpls = rec_length_smpls
+        self.rec_length = rec_length
 
         self.setup_data_dir(data_dir_path)
         print("- folder setup complete")
@@ -22,24 +21,10 @@ class robotRecording:
 
         # TODO: Robot setup complete
 
-        self.setup_jack()
-        print("- jacktools setup complete")
+        self.audio_recorder = audio_recorder.AudioRecorder()
+        print("- audio setup complete")
         print("\n--- setup complete ---\n")
         print(f"starting session {self.session} at index {self.index}.")
-
-
-    def setup_jack(self):
-        self.J = JackSignal("JS")
-        assert self.J.get_state() >= 0, "Creating JackSignal failed."
-        name, sr, period = self.J.get_jack_info()
-        self.SR = sr
-        
-        self.J.create_input(1, "in_1")
-        self.J.connect_input(1, "system:capture_1")
-        self.J.silence()
-
-        self.Ain = np.zeros(self.rec_length_smpls, dtype=np.float32)
-        self.J.set_input_data(1, self.Ain)
 
 
     def setup_data_dir(self, data_dir_path):
@@ -101,15 +86,13 @@ class robotRecording:
         
 
     def record_sample(self, joint_pos):
-        self.J.process()
-        self.J.wait()
         sound_file = os.path.join(self.data_dir, f"{self.index}.wav")
-        scipy.io.wavfile.write(sound_file, self.SR, self.Ain)
+        samples = self.audio_recorder.create_recording(self.rec_length, sound_file)
 
         joint_txt = ", ".join([str(q) for q in joint_pos])
-        
+
         with open(self.sample_idx_file, "a") as f:
-            f.write(f"{self.index}, {joint_txt}, {self.rec_length_smpls}, {self.SR}, {self.session}, {self.notes}\n")
+            f.write(f"{self.index}, {joint_txt}, {samples}, {self.audio_recorder.SR}, {self.session}, {self.notes}\n")
 
         with open(self.metadata_file, "w") as f:
                 f.write(f"session: {self.session}\nindex: {self.index}")
@@ -122,10 +105,10 @@ if __name__ == "__main__":
         positions = int(positions)
     else:
         positions = 1
-    if rec_length := input("Recording lenghth in samples: "):
+    if rec_length := input("Recording lenghth in seconds: "):
         rec_length = int(rec_length)
     else:
-        rec_length = 48000 * 5
+        rec_length = 5
 
     if notes := input("Input notes: "):
         rec_length = int(rec_length)
