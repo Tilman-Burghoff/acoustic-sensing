@@ -1,7 +1,7 @@
 import numpy as np
 import os
-import subprocess
 import audio_recorder
+from ros_controller import ROSController
 
 
 class robotRecording:
@@ -19,7 +19,8 @@ class robotRecording:
 
         self.rng = np.random.default_rng(rng_seed)
 
-        # TODO: Robot setup complete
+        self.ros_controller = ROSController()
+        print("- ros setup complete")
 
         self.audio_recorder = audio_recorder.AudioRecorder()
         print("- audio setup complete")
@@ -54,31 +55,10 @@ class robotRecording:
 
 
     def get_joint_position(self):
-        
-        cpp_program = "../robot-control/get_current_joint_position"
-        robot_hostname = "111.111.1.1"
-
-        args = [cpp_program, robot_hostname]
-        
-        try:
-            result = subprocess.run(args,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE,
-                                    text=True, 
-                                    check=True)
-
-            output = result.stdout.strip()
-            if "Current joint positions:" in output:
-                output = output.replace("Current joint positions:", "").strip()
-
-            joint_positions = np.array(list(map(float, output.split())))
-            
-            return joint_positions
-        
-        except subprocess.CalledProcessError as e:
-            print(f"Error running C++ program: {e.stderr}")
-            return None
-
+        current_positions = self.ros_controller.get_current_joint_positions()
+        if current_positions:
+            print(f"Current joint positions: {current_positions}")
+        return current_positions
 
 
 
