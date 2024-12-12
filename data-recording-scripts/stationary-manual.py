@@ -99,6 +99,5 @@ if __name__ == "__main__":
         notes = ""
 
     record = robotRecording(positions, rec_length, notes=notes)
-    print("Stay clear of the workspace of the robot!")
     input("Press enter to start recording.")
     record.record()

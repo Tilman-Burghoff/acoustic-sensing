@@ -15,7 +15,7 @@ class AudioRecorder:
         print("index  name")
         for i in range(self.audio.get_device_count()):
             device_info = self.audio.get_device_info_by_index(i)
-            print(f"{i:>5}  {device_info["name"]}")
+            print(f"{i:>5}  {device_info['name']}")
         
         if device_idx := input("Recording device index: "):
             self.device_idx = int(device_idx)

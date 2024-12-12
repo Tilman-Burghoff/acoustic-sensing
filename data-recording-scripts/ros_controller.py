@@ -1,7 +1,8 @@
 import rospy
 from std_msgs.msg import Float64MultiArray, MultiArrayDimension
 from sensor_msgs.msg import JointState
-from hybrid_automaton_msgs import srv
+# from hybrid_automaton_msgs import srv
+from panda_ha_msgs.msg import RobotState
 
 
 class ROSController:
@@ -11,30 +12,25 @@ class ROSController:
         
         self.joint_goal_pub = rospy.Publisher('/joint_goal', Float64MultiArray, queue_size=10)
     
-        self.call_ha = rospy.ServiceProxy('update_hybrid_automaton', srv.UpdateHybridAutomaton)
+        # self.call_ha = rospy.ServiceProxy('update_hybrid_automaton', srv.UpdateHybridAutomaton)
         
         self.kp = [60.0, 60.0, 60.0, 60.0, 60.0, 20.0, 20.0] 
         self.kv = [30.0, 30.0, 20.0, 20.0, 20.0, 20.0, 10.0]
         
-        self.current_joint_states = None
-        rospy.Subscriber('/joint_states', JointState, self.joint_states_callback)
+        self.q = None
+        rospy.Subscriber('/robot/currentstate', RobotState, self.collectStateCallback)
+        self.collecting = True
 
 
-    def joint_states_callback(self, msg: JointState):
- 
-        self.current_joint_states = {
-            "name": msg.name,
-            "position": msg.position,
-            "velocity": msg.velocity,
-            "effort": msg.effort
-        }
-        rospy.loginfo(f"Received joint states: {self.current_joint_states}")
-
+    def collectStateCallback(self, data):
+        if not self.collecting:
+            return
+        self.q = data.q
 
     def get_current_joint_positions(self):
  
-        if self.current_joint_states:
-            return self.current_joint_states["position"]
+        if self.q:
+            return self.q
         else:
             rospy.logwarn("Joint states not received yet!")
             return None
