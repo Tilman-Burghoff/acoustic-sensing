@@ -6,3 +6,6 @@ data-recording-scripts/data/
 .robot-control/get_current_joint_position
 .robot-control/move_to_joint_position
 __pycache__/
+*.txt
+*.csv
+*.zip
