@@ -1,5 +1,6 @@
 import rospy
 from std_msgs.msg import Float64MultiArray, MultiArrayDimension
+from sensor_msgs.msg import JointState
 from hybrid_automaton_msgs import srv
 
 
@@ -15,6 +16,29 @@ class ROSController:
         self.kp = [60.0, 60.0, 60.0, 60.0, 60.0, 20.0, 20.0] 
         self.kv = [30.0, 30.0, 20.0, 20.0, 20.0, 20.0, 10.0]
         
+        self.current_joint_states = None
+        rospy.Subscriber('/joint_states', JointState, self.joint_states_callback)
+
+
+    def joint_states_callback(self, msg: JointState):
+ 
+        self.current_joint_states = {
+            "name": msg.name,
+            "position": msg.position,
+            "velocity": msg.velocity,
+            "effort": msg.effort
+        }
+        rospy.loginfo(f"Received joint states: {self.current_joint_states}")
+
+
+    def get_current_joint_positions(self):
+ 
+        if self.current_joint_states:
+            return self.current_joint_states["position"]
+        else:
+            rospy.logwarn("Joint states not received yet!")
+            return None
+
 
     def list_to_ha_string(self, array: 'list[float]') -> str:
 
