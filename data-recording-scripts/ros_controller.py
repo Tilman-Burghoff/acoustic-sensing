@@ -1,6 +1,5 @@
 import rospy
 from std_msgs.msg import Float64MultiArray, MultiArrayDimension
-from sensor_msgs.msg import JointState
 # from hybrid_automaton_msgs import srv
 from panda_ha_msgs.msg import RobotState
 
