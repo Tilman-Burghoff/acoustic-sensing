@@ -3,6 +3,4 @@
 data-recording-scripts/data/
 *.wav
 *.npy
-.robot-control/get_current_joint_position
-.robot-control/move_to_joint_position
 __pycache__/
