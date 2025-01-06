@@ -11,43 +11,46 @@ import copy
 # Define an abstract class
 class Model(ABC):
     @abstractmethod
-    def train(self, X1, X2, X3, X4, y):
+    def train(self, X, y):
         pass
 
 
     @abstractmethod
-    def predict(self, X1, X2, X3, X4,):
+    def predict(self, X):
         pass
 
 
 class Linear(Model):
     def __init__(self):
         super().__init__()
-        self.reg = make_pipeline([StandardScaler, LinearRegression])
+        self.scaling = StandardScaler()
+        self.regression = LinearRegression()
 
-    def train(self, X1, X2, X3, X4, y):
-        self.reg.fit(X1, y)
+    def train(self, X, y):
+        X_train = self.scaling.fit_transform(np.squeeze(X[:,:,0]))
+        self.regression.fit(X_train, y)
 
-    def predict(self, X1, X2, X3, X4):
-        return self.reg.predict(X1)
+    def predict(self, X):
+        X_test = self.scaling.transform(np.squeeze(X[:,:,0]))
+        return self.regression.predict(X_test)
 
 
 class FullyConnected(Model):
-    def __init__(self, hidden_layers=1):
+    def __init__(self, layers=2):
         super().__init__()
-        self.hidden_layers = hidden_layers
+        self.hidden_layers = layers - 1
         self.scaling = StandardScaler()
 
-    def train(self, X1, X2, X3, X4, y):
-        X_train = self.scaling.fit_transform(X1)
-        untrained = self.MLP(X1.shape[1], self.hidden_layers)
+    def train(self, X, y):
+        X_train = self.scaling.fit_transform(np.squeeze(X[:,:,0]))
+        untrained = self.MLP(X.shape[1], self.hidden_layers)
         self.model = train_nn(untrained, X_train, y)
 
-    def predict(self, X1, X2, X3, X4,):
-        X1 = torch.tensor(self.scaling.transform(X1), dtype=torch.float32)
+    def predict(self, X):
+        X_test = torch.tensor(self.scaling.transform(np.squeeze(X[:,:,0])), dtype=torch.float32)
         self.model.eval()
         with torch.no_grad():
-            return self.model(X1).numpy().ravel()
+            return self.model(X_test).numpy().ravel()
         
 
 
@@ -55,14 +58,15 @@ class FullyConnected(Model):
         def __init__(self, inputdim, hidden_layers: int):
             super().__init__()
             
-            if hidden_layers == 0:
-                self.model = [nn.Linear(inputdim, 64)]
+            if hidden_layers < 2:
+                model = [nn.Linear(inputdim, 64)]
             else:
-                self.model = [nn.Linear(inputdim, 512)]
-                self.model.append(nn.Linear(512,64))
+                model = [nn.Linear(inputdim, 512)]
+                model.append(nn.Linear(512,64))
                 for i in range(hidden_layers-1):
-                    self.model.append(nn.Linear(64, 64))
-            self.model.append(nn.Linear(64, 1))
+                    model.append(nn.Linear(64, 64))
+            model.append(nn.Linear(64, 1))
+            self.model = nn.ModuleList(model)
             self.relu = nn.ReLU()
 
         def forward(self, x):
@@ -75,22 +79,20 @@ class Convolution(Model):
     def __init__(self, channels=1):
         super().__init__()
         self.channels = channels
-        self.scaling = StandardScaler
+        self.scaling = StandardScaler()
 
-    def train(self, X1, X2, X3, X4, y):
-        input_X = [X1, X2, X3, X4]
-        X = np.stack(input_X[:self.channels], axis=-1)
-        X_train = self.scaling.fit_transform(X.reshape(-1, X1.shape[1])).reshape(-1, self.channels, X1.shape[1])
+    def train(self, X, y):
+        X = X[:,:,:self.channels]
+        X_train = self.scaling.fit_transform(X.reshape(-1, X.shape[1])).reshape(-1, X.shape[1], self.channels)
         untrained = self.Conv(self.channels)
         self.model = train_nn(untrained, X_train, y)
 
-    def predict(self, X1, X2, X3, X4,):
-        input_X = [X1, X2, X3, X4]
-        X = np.stack(input_X[:self.channels], axis=-1)
-        X = self.scaling.transform(X.reshape(-1, X1.shape[1])).reshape(-1, self.channels, X1.shape[1])
+    def predict(self, X):
+        X = X[:,:,:self.channels]
+        X = self.scaling.transform(X.reshape(-1, X.shape[1])).reshape(-1, X.shape[1], self.channels)
         self.model.eval()
         with torch.no_grad():
-            return self.model(torch.tensor(X)).numpy().ravel()
+            return self.model(torch.tensor(X, dtype=torch.float32)).numpy().ravel()
     
         
 
@@ -122,45 +124,44 @@ def train_nn(network, X, y):
     optimizer = optim.SGD(network.parameters(), lr=0.01, momentum=0.9, weight_decay=0.01)
 
     # Training loop
-    epochs = 1#00  # Number of epochs to train
-    batch_size = 32  # Batch size for mini-batch gradient descent
+    epochs = 100  # Number of epochs to train
+    batch_size = 64  # Batch size for mini-batch gradient descent
 
     X_train_tensor = torch.tensor(X, dtype=torch.float32)
     y_train_tensor = torch.tensor(y, dtype=torch.float32).view(-1, 1)
 
     best_score = 1
-    losses = []
+    best_model = network
 
     for epoch in range(epochs):
         network.train()  # Set the model to training mode
         permutation = torch.randperm(X_train_tensor.size(0))  # Shuffle the data
-
         for i in range(0, X_train_tensor.size(0), batch_size):
             indices = permutation[i:i+batch_size]
             batch_x, batch_y = X_train_tensor[indices], y_train_tensor[indices]
 
-            # Zero the gradients from the previous step
             optimizer.zero_grad()
-
-            # Forward pass
             outputs = network(batch_x)
 
-            # Calculate the loss
             loss = criterion(outputs, batch_y)
 
-            # Backward pass (compute gradients)
-            loss.backward()
+            if not torch.isnan(loss):
+                loss.backward()
+                optimizer.step()
+            else:
+                print(f"Encoutered NaN-loss in epoch {epoch} at index {i}")
+        
 
-            # Update the weights using the optimizer
-            optimizer.step()
+        train_loss = criterion(network(X_train_tensor), y_train_tensor)
 
-        # Print the loss every 10 epochs
         if (epoch + 1) % 10 == 0:
-            print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.6f}')
+            print(f'Epoch [{epoch+1}/{epochs}], Loss: {train_loss.item():.6f}')
 
-        losses.append(loss.item())
-        if loss.item() < best_score:
+
+
+        if train_loss.item() < best_score:
             best_score = loss.item()
             best_model = copy.deepcopy(network)
         
     return best_model
+
