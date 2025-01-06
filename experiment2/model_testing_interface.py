@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import torch
 from torch import nn
 from torch import optim
@@ -39,61 +39,60 @@ class FullyConnected(Model):
     def __init__(self, layers=2):
         super().__init__()
         self.hidden_layers = layers - 1
-        self.scaling = StandardScaler()
+        self.Xscaling = StandardScaler()
+        self.yscaling = MinMaxScaler()
 
     def train(self, X, y):
-        X_train = self.scaling.fit_transform(np.squeeze(X[:,:,0]))
+        X_train = self.Xscaling.fit_transform(np.squeeze(X[:,:,0]))
+        y_train = self.yscaling.fit_transform(y.reshape(-1, 1))
         untrained = self.MLP(X.shape[1], self.hidden_layers)
-        self.model = train_nn(untrained, X_train, y)
+        self.model = train_nn(untrained, X_train, y_train)
 
     def predict(self, X):
-        X_test = torch.tensor(self.scaling.transform(np.squeeze(X[:,:,0])), dtype=torch.float32)
+        X_test = torch.tensor(self.Xscaling.transform(np.squeeze(X[:,:,0])), dtype=torch.float32)
         self.model.eval()
         with torch.no_grad():
-            return self.model(X_test).numpy().ravel()
-        
-
+            y_scaled = self.model(X_test).numpy()
+        return self.yscaling.inverse_transform(y_scaled).ravel()
 
     class MLP(nn.Module):
         def __init__(self, inputdim, hidden_layers: int):
             super().__init__()
-            
             if hidden_layers < 2:
-                model = [nn.Linear(inputdim, 64)]
+                model = [nn.Linear(inputdim, 64), nn.ReLU()]
             else:
-                model = [nn.Linear(inputdim, 512)]
-                model.append(nn.Linear(512,64))
-                for i in range(hidden_layers-1):
+                model = [nn.Linear(inputdim, 512), nn.ReLU(), nn.Linear(512,64), nn.ReLU()]
+                for _ in range(hidden_layers-2):
                     model.append(nn.Linear(64, 64))
+                    model.append(nn.ReLU())
             model.append(nn.Linear(64, 1))
-            self.model = nn.ModuleList(model)
-            self.relu = nn.ReLU()
+            self.linear_stack = nn.Sequential(*model)
 
         def forward(self, x):
-            for layer in self.model[:-1]:
-                x = self.relu(layer(x))
-            return self.model[-1](x)
+            return self.linear_stack(x)
         
 
 class Convolution(Model):
     def __init__(self, channels=1):
         super().__init__()
         self.channels = channels
-        self.scaling = StandardScaler()
+        self.Xscaling = StandardScaler()
+        self.yscaling = MinMaxScaler()
 
     def train(self, X, y):
         X = X[:,:,:self.channels]
-        X_train = self.scaling.fit_transform(X.reshape(-1, X.shape[1])).reshape(-1, X.shape[1], self.channels)
+        X_train = self.Xscaling.fit_transform(X.reshape(-1, X.shape[1])).reshape(-1, X.shape[1], self.channels)
+        y_train = self.yscaling.fit_transform(y.reshape(-1, 1))
         untrained = self.Conv(self.channels)
-        self.model = train_nn(untrained, X_train, y)
+        self.model = train_nn(untrained, X_train, y_train)
 
     def predict(self, X):
         X = X[:,:,:self.channels]
-        X = self.scaling.transform(X.reshape(-1, X.shape[1])).reshape(-1, X.shape[1], self.channels)
+        X = self.Xscaling.transform(X.reshape(-1, X.shape[1])).reshape(-1, X.shape[1], self.channels)
         self.model.eval()
         with torch.no_grad():
-            return self.model(torch.tensor(X, dtype=torch.float32)).numpy().ravel()
-    
+            y_scaled = self.model(torch.tensor(X, dtype=torch.float32)).numpy()
+        return self.yscaling.inverse_transform(y_scaled).ravel()
         
 
 
@@ -121,19 +120,21 @@ class Convolution(Model):
 
 def train_nn(network, X, y):
     criterion = nn.MSELoss()
-    optimizer = optim.SGD(network.parameters(), lr=0.01, momentum=0.9, weight_decay=0.01)
+    optimizer = optim.SGD(network.parameters(), lr=0.005, momentum=0.9, weight_decay=0.01)
 
     # Training loop
-    epochs = 100  # Number of epochs to train
-    batch_size = 64  # Batch size for mini-batch gradient descent
+    epochs = 200  # Number of epochs to train
+    batch_size = 128  # Batch size for mini-batch gradient descent
 
     X_train_tensor = torch.tensor(X, dtype=torch.float32)
-    y_train_tensor = torch.tensor(y, dtype=torch.float32).view(-1, 1)
+    y_train_tensor = torch.tensor(y, dtype=torch.float32)
 
     best_score = 1
-    best_model = network
+    best_model = copy.deepcopy(network)
+
 
     for epoch in range(epochs):
+        nanloss = 0
         network.train()  # Set the model to training mode
         permutation = torch.randperm(X_train_tensor.size(0))  # Shuffle the data
         for i in range(0, X_train_tensor.size(0), batch_size):
@@ -149,19 +150,25 @@ def train_nn(network, X, y):
                 loss.backward()
                 optimizer.step()
             else:
-                print(f"Encoutered NaN-loss in epoch {epoch} at index {i}")
+                nanloss += 1
         
-
+        if nanloss > 0:
+            print(f"Warning: encountered loss=NaN {nanloss} times in epoch {epoch}. That is {nanloss/(X_train_tensor.size(0)/batch_size):%} of the batches.")
+            network = copy.deepcopy(best_model)
+            optimizer = optim.SGD(network.parameters(), lr=0.005, momentum=0.9, weight_decay=0.01)
+            continue
+    
+        network.eval()
         train_loss = criterion(network(X_train_tensor), y_train_tensor)
-
-        if (epoch + 1) % 10 == 0:
-            print(f'Epoch [{epoch+1}/{epochs}], Loss: {train_loss.item():.6f}')
-
-
 
         if train_loss.item() < best_score:
             best_score = loss.item()
             best_model = copy.deepcopy(network)
+            if best_score < 0.001:
+                print(f"Abandoning training after {epoch} epochs with loss {best_score:.6f}")
+                return best_model
+
+        if (epoch + 1) % 10 == 0:
+            print(f'Epoch [{epoch+1}/{epochs}], Loss: {train_loss.item():.6f}')
         
     return best_model
-
