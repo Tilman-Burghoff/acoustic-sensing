@@ -71,7 +71,7 @@ class FullyConnected(Model):
                     model.append(nn.ReLU())
             model.append(nn.Linear(64, 1))
             self.linear_stack = nn.Sequential(*model)
-            self.optimizer = optim.Adam(self.parameters())
+            self.optimizer = optim.SGD(self.parameters(), lr=0.005, momentum=0.9, weight_decay=0.01)
 
         def forward(self, x):
             return self.linear_stack(x)
@@ -176,5 +176,7 @@ def train_nn(network, X, y, X_test, y_test):
 
         if (epoch + 1) % 10 == 0:
             print(f'Epoch [{epoch+1}/{epochs}], Test-Loss: {test_loss.item():.6f}')
+
         
+    print(f"Training Complete, best test performance: {best_score:.6f}")
     return best_model
