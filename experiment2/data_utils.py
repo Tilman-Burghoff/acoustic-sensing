@@ -82,11 +82,23 @@ def k_fold_split(X, y, k_fold=5, seed=0):
     return X_split, y_split
 
 
-def k_fold_iter(X, y, k_fold=5, seed=0):
+def k_fold_iter(X, y, k_fold=5, seed=0, val_set_size=0):
     X_split, y_split = k_fold_split(X, y, k_fold, seed)
-    for i in range(k_fold):
-        train_X = np.concatenate(X_split[:i]+X_split[i+1:], axis=0)
-        train_y = np.concatenate(y_split[:i]+y_split[i+1:], axis=0)
-        yield train_X, train_y, X_split[i], y_split[i]
+    for i in range(k_fold-val_set_size):
+        train_X = np.concatenate(X_split[:i]+X_split[i+val_set_size+1:], axis=0)
+        train_y = np.concatenate(y_split[:i]+y_split[i+val_set_size+1:], axis=0)
+        if val_set_size > 0:
+            test_X = np.concatenate(X_split[i:i+val_set_size], axis=0)
+            test_y = np.concatenate(y_split[i:i+val_set_size], axis=0)
+            yield train_X, train_y, test_X, test_y, X_split[i+val_set_size], y_split[i+val_set_size]
+        else:
+            yield train_X, train_y, X_split[i], y_split[i]
+    for i in range(val_set_size):
+        train_X = np.concatenate(X_split[i+1:k_fold-val_set_size+i], axis=0)
+        train_y = np.concatenate(y_split[i+1:k_fold-val_set_size+i], axis=0)
+        test_X = np.concatenate(X_split[:i]+X_split[k_fold-val_set_size+i:], axis=0)
+        test_y = np.concatenate(y_split[:i]+y_split[k_fold-val_set_size+i:], axis=0)
+        yield train_X, train_y, test_X, test_y, X_split[i], y_split[i]
+
 
 

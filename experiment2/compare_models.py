@@ -16,7 +16,7 @@ models = {
 }
 
 metrics = {
-    "Mean Sqaure Error": mean_square_error,
+    "Mean Square Error": mean_square_error,
     "R squared": R_squared,
     "Standard Deviation of Error": error_standard_deviation,
     "Standard deviation per Recording (avg)": avg_rec_std,
@@ -26,20 +26,21 @@ metrics = {
 
 X, y = read_data()
 results = []
-k_fold = 5
+k_fold = 10
+test_set_size = 2
+seed = 42
 
 print("Beginning Evalution\n")
 
-for i, (X_train, y_train, X_test, y_test) in enumerate(k_fold_iter(X, y, k_fold)):
+for i, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter(X, y, k_fold, seed, test_set_size)):
     print(f"Evaluation round {i} of {k_fold}\n")
     for modelname, model in models.items():
-        print(f' --- Trainig Model "{modelname}" --- ')
-        model.train(X_train, y_train)
-        print(" --- Evaluating Model --- ")
-        predictions = model.predict(X_test)
+        print(f' --- Training Model "{modelname}" ---')
+        model.train(X_train, y_train, X_test, y_test)
+        print(" --- Evaluating Model ---\n")
+        predictions = model.predict(X_val)
         for metricname, metric in metrics.items():
-            results.append([i, modelname, metricname, metric(y_test, predictions)])
-        print(" --- Evaluation Complete ---\n")
+            results.append([i, modelname, metricname, metric(y_val, predictions)])
 
 resultsdf = pd.DataFrame(results, columns=["Iteration", "Modelname", "Metricname", "Result"])
 resultsdf.to_csv("./results.csv")
