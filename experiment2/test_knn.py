@@ -4,9 +4,9 @@ from model_testing_interface import KNN
 from model_evaluation_metrics import mean_square_error, R_squared, error_standard_deviation, avg_rec_std, outlier_ratio
 from data_utils import read_data, k_fold_iter
 
-nbhs = [1,2,5,10,20,50,100]
 
-models = {nbh:KNN(nbh) for nbh in nbhs}
+
+models = {nbh:KNN(nbh) for nbh in range(1,25)}
 
 metrics = {
     "Mean Square Error": mean_square_error,
