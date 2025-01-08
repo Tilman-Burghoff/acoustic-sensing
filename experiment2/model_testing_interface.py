@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import torch
@@ -35,12 +36,28 @@ class Linear(Model):
     def predict(self, X):
         X_test = self.scaling.transform(np.squeeze(X[:,:,0]))
         return self.regression.predict(X_test)
+    
+class KNN(Model):
+    def __init__(self, n_neighours):
+        super().__init__()
+        self.scaling = StandardScaler()
+        self.regression = KNeighborsRegressor(n_neighbors=n_neighours)
+
+    def train(self, X, y, X_test, y_test):
+        X = np.concatenate([X, X_test], axis=0)
+        y = np.concatenate([y, y_test], axis=0)
+        X_train = self.scaling.fit_transform(np.squeeze(X[:,:,0]))
+        self.regression.fit(X_train, y)
+
+    def predict(self, X):
+        X_test = self.scaling.transform(np.squeeze(X[:,:,0]))
+        return self.regression.predict(X_test)
 
 
 class FullyConnected(Model):
-    def __init__(self, layers=2):
+    def __init__(self, layers=3):
         super().__init__()
-        self.hidden_layers = layers - 1
+        self.hidden_layers = layers - 2
         self.Xscaling = StandardScaler()
         self.yscaling = MinMaxScaler()
 
