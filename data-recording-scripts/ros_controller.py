@@ -1,6 +1,6 @@
 import rospy
 from std_msgs.msg import Float64MultiArray, MultiArrayDimension
-# from hybrid_automaton_msgs import srv
+from hybrid_automaton_msgs import srv
 from panda_ha_msgs.msg import RobotState
 
 
@@ -11,7 +11,7 @@ class ROSController:
         
         self.joint_goal_pub = rospy.Publisher('/joint_goal', Float64MultiArray, queue_size=10)
     
-        # self.call_ha = rospy.ServiceProxy('update_hybrid_automaton', srv.UpdateHybridAutomaton)
+        self.call_ha = rospy.ServiceProxy('update_hybrid_automaton', srv.UpdateHybridAutomaton)
         
         self.kp = [60.0, 60.0, 60.0, 60.0, 60.0, 20.0, 20.0] 
         self.kv = [30.0, 30.0, 20.0, 20.0, 20.0, 20.0, 10.0]
@@ -69,7 +69,7 @@ class ROSController:
         return xml
 
 
-    def move_to_position(self, joint_pos, completion_time=4):
+    def move_to_position(self, joint_pos, completion_time=1):
   
         ha_to_send = self.create_HA(joint_pos=joint_pos, completion_times=[completion_time])
         self.call_ha(ha_to_send)
