@@ -6,9 +6,9 @@ from data_utils import read_data, k_fold_iter
 
 models = {
     "Linear": Linear(),
-    "2-Layer FC": FullyConnected(0),
-    "3-Layer FC": FullyConnected(1),
-    "4-Layer FC": FullyConnected(2),
+    "3-Layer FC": FullyConnected(3),
+    "4-Layer FC": FullyConnected(4),
+    "5-Layer FC": FullyConnected(5),
     "1-Channel CNN": Convolution(1),
     "2-Channel CNN": Convolution(2),
     "3-Channel CNN": Convolution(3),
