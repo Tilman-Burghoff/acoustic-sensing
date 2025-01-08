@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.pipeline import make_pipeline
+from sklearn.svm import SVR
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import torch
 from torch import nn
@@ -42,6 +42,22 @@ class KNN(Model):
         super().__init__()
         self.scaling = StandardScaler()
         self.regression = KNeighborsRegressor(n_neighbors=n_neighours)
+
+    def train(self, X, y, X_test, y_test):
+        X = np.concatenate([X, X_test], axis=0)
+        y = np.concatenate([y, y_test], axis=0)
+        X_train = self.scaling.fit_transform(np.squeeze(X[:,:,0]))
+        self.regression.fit(X_train, y)
+
+    def predict(self, X):
+        X_test = self.scaling.transform(np.squeeze(X[:,:,0]))
+        return self.regression.predict(X_test)
+    
+class SVM(Model):
+    def __init__(self):
+        super().__init__()
+        self.scaling = StandardScaler()
+        self.regression = SVR()
 
     def train(self, X, y, X_test, y_test):
         X = np.concatenate([X, X_test], axis=0)
