@@ -43,7 +43,7 @@ class robotRecording:
 
         if not os.path.exists(self.sample_idx_file):
             with open(self.sample_idx_file, "x") as f:
-                f.write("idx, q_0, q_1, q_2, q_3, q_4, q_5, q_6, samples, SR, session_id, notes\n")
+                f.write("idx,q_0,q_1,q_2,q_3,q_4,q_5,q_6,samples,SR,session_id,notes\n")
             
             with open(self.metadata_file, "x") as f:
                 f.write("session: 0\nindex:0")
@@ -56,22 +56,71 @@ class robotRecording:
             
             self.session = int(metadata[0].split(":")[1]) + 1
             self.index = int(metadata[1].split(":")[1]) + 1
+    
+    def small_box(self):
+        xs = -1.5704 + 2.4 + np.arange(8) * 0.1
+        ys = -0.3 -1.6 - np.arange(5) * 0.1
+        dir = -1
+        for y in ys:
+            dir *=-1
+            for x in xs[::dir]:
+                yield x, y 
 
+    # start_j = 19, start_i = 30
+    # starting pose = 0.73, 0.0, 0.0, -1.6, 0.0, 1.57, 0.0
+    def record(self, start_j=0, start_i=0):
+        
+        vorzeichen = 1 if start_j % 2 == 0 else -1
+        for j in range(start_j,27):
+            for i in range(start_i if j == start_j else 0, 31):
+                joint_pos = self.starting_pose
+                print(f"\nmoving robot to {np.round(joint_pos, 2)}")
+                if i == start_i and j == start_j:
+                    completion_time = 5
+                else:
+                    completion_time = 1
+                self.ros_controller.move_to_position(joint_pos, completion_time)
+                
+                print("recording audio")
+                self.record_sample(joint_pos)
 
-    def record(self, completion_time=1):
-        for i in range(self.positions):
+                print(f"Changing selected joint angles by  {self.jointangle_change} rad.")
+                self.starting_pose += np.array([1, 0, 0, 0, 0, 0, 0]) * self.jointangle_change * vorzeichen
+
+                print("j = " + str(j) + ", i = " + str(i))
+
+                self.index += 1
+            
             joint_pos = self.starting_pose
-            print(f"\nmoving robot to {np.round(joint_pos, 2)}")
+            completion_time = 1
             self.ros_controller.move_to_position(joint_pos, completion_time)
+            self.record_sample(joint_pos)
+            self.starting_pose -= np.array([0, 0, 0, 1, 0, 0, 0]) * self.jointangle_change
+            print(f"\nmoving robot to {np.round(self.starting_pose, 2)}")
+            vorzeichen *= -1
+         
+            self.index += 1
+        
+        """
+        # self.starting_pose= np.array([-1.5704 + 2.4 , 0, 0, -0.3 -1.4, 0, 1.5704, 0])
+
+        print(f"\nmoving robot to {np.round(self.starting_pose, 2)}")
+        
+        self.ros_controller.move_to_position(self.starting_pose, 5)
+        for x,y in self.small_box():
+            joint_pos = self.starting_pose
+            joint_pos[0] = x
+            joint_pos[3] = y
+            print(f"\nmoving robot to {np.round(joint_pos, 2)}")
+            self.ros_controller.move_to_position(joint_pos, 1)
             
             print("recording audio")
             self.record_sample(joint_pos)
 
-            if self.positions > 1:
-                print(f"Changing selected joint angles by  {self.jointangle_change} rad.")
-                self.starting_pose += self.joint_change_mask * self.jointangle_change
-
             self.index += 1
+        """
+        
+        
 
 
 
@@ -100,23 +149,23 @@ if __name__ == "__main__":
     else:
         positions = 1
 
-    print("The default starting pose is [0, 0, 0, 0, 0, 0, 0]. Change this in the following if needed (e.g. 1,2,3,4,5,6,7).")
+    print("The default starting pose is [0, 0, 0, -1.5708, 0, 1.5708, 0]. Change this in the following if needed (e.g. 1,2,3,4,5,6,7).")
     if starting_pose := input("Starting pose: "):
         starting_pose = np.array([float(x) for x in starting_pose.split(",")])
     else:
-        starting_pose = np.array([0, 0, 0, 0, 0, 0, 0])
-
+        # starting_pose = np.array([-1.5708, 0, 0, -0.3, 0, 1.5708, 0])
+        starting_pose = np.array([1.53, 0, 0, -2.7, 0, 1.5708, 0])
     print("The default change of joint angle is 0.10 rad. Change this in the following if needed.")
     if jointangle_change := input("Change of joint angle: "):
         jointangle_change = float(jointangle_change)
     else:
-        jointangle_change = 0.10
+        jointangle_change = 0.1
 
     print("Specify which joints to change (e.g. 1,1,1,0,0,0,0 for the first three joints). If not, all joints will be changed.")
     if joint_change_mask := input("Joint change mask: "):
         joint_change_mask = np.array([int(x) for x in joint_change_mask.split(",")])
     else:
-        joint_change_mask = np.array([1, 1, 1, 1, 1, 1, 1])
+        joint_change_mask = np.array([1, 0, 0, 1, 0, 0, 0])
 
     if rec_length := input("Recording lenghth in seconds: "):
         rec_length = int(rec_length)
@@ -131,4 +180,4 @@ if __name__ == "__main__":
     record = robotRecording(positions, starting_pose, jointangle_change, joint_change_mask, rec_length, notes=notes)
     print("Stay clear of the workspace of the robot!")
     input("Press enter to start recording.")
-    record.record()
+    record.record(25, 0)
