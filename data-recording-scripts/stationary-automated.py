@@ -5,7 +5,7 @@ from ros_controller import ROSController
 from robot_movement_iterators import Grid_2d
 from time import sleep
 
-DEBUG = True # if Robot is not available
+DEBUG = False # if Robot is not available
 
 class robotRecording:
     def __init__(self, position_iterator, rec_length, wait_for_move=False, data_dir_path="./data", rng_seed=None, notes="", debug=False):

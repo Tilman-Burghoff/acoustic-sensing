@@ -9,7 +9,7 @@ class Grid_2d:
         self.joint_x=0
         self.joint_y=3
         self.points_x=32
-        self.points_y=25
+        self.points_y=26
         self.step_x=0.1
         self.step_y=-0.1
         self.continue_from=0
