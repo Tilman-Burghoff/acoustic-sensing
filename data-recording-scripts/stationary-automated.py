@@ -60,7 +60,7 @@ class robotRecording:
     
     def record(self):        
         for position, movetime, for_recording in self.position_iterator:
-            print(f"\nmoving robot to {np.round(position, 2)}")
+            print(f"moving robot to {np.round(position, 2)}")
             self.ros_controller.move_to_position(position, movetime)
 
             if self.wait_for_move:
@@ -71,6 +71,7 @@ class robotRecording:
                 self.record_sample(position)
 
             self.index += 1
+            print()
 
     def record_sample(self, joint_pos):
         sound_file = os.path.join(self.data_dir, f"{self.index}.wav")
@@ -105,11 +106,14 @@ def select_catridge():
     print("The values are now:")
     for i, name in enumerate(selected.get_variable_names()):
         print(f"{i:2}: {name} = {selected.__getattribute__(name)}")
+    selected.preview_iter()
     return selected.get_iterator()
 
 
 
 if __name__ == "__main__":
+    iterator = select_catridge()
+
     if rec_length := input("Recording length in seconds: "):
         rec_length = int(rec_length)
     else:
@@ -119,8 +123,6 @@ if __name__ == "__main__":
         rec_length = int(rec_length)
     else:
         notes = ""
-    
-    iterator = select_catridge()
 
     record = robotRecording(iterator, rec_length, notes=notes, debug=DEBUG)
     print("Stay clear of the workspace of the robot!")

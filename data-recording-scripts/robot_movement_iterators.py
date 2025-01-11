@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import copy
 
 class Grid_2d:
@@ -18,18 +19,30 @@ class Grid_2d:
         
     def get_variable_names(self):
         return self.public_variable_names
+    
+    def preview_iter(self):
+        xs = []
+        ys = []
+        for pose, _, record in self.get_iterator(log_index=False):
+            if record:
+                xs.append(pose[self.joint_x])
+                ys.append(pose[self.joint_y])
+
+        plt.plot(xs, ys)
+        plt.xlabel("q0")
+        plt.ylabel("q3")
+        plt.axis("equal")
+        plt.title("Motion Preview")
+        plt.show()
 
     def get_position_by_index(self, idx):
-        
         y_mult = idx // self.points_x
         x_mult = idx % self.points_x if y_mult % 2 == 0 else self.points_x -1 - (idx % self.points_x)
         self.pose[self.joint_x] = self.start_pos[self.joint_x] + x_mult * self.step_x
         self.pose[self.joint_y] = self.start_pos[self.joint_y] + y_mult * self.step_y
-        print(x_mult, y_mult)
         return self.pose
     
-
-    def get_iterator(self):
+    def get_iterator(self, log_index=True):
         self.pose = copy.copy(self.start_pos)
         def grid_2d_iter():
             positions = self.points_x * self.points_y
@@ -39,7 +52,8 @@ class Grid_2d:
                 pose = self.get_position_by_index(self.continue_from - 1)
                 yield pose, 5, False
             for i in range(self.continue_from, positions):
-                print(f"Moving to position_index {i}")
+                if log_index:
+                    print(f"Moving to position_index {i}")
                 pose = self.get_position_by_index(i)
                 yield pose, 1, True
 
