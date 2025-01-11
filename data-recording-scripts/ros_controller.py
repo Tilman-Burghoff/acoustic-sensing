@@ -5,8 +5,16 @@ from panda_ha_msgs.msg import RobotState
 
 
 class ROSController:
-    def __init__(self):
-        
+    def __init__(self, debug=False):
+
+        self.debug = debug
+
+        if not self.debug:
+            self.init_rospy()
+
+        self.collecting = True
+
+    def init_rospy(self):
         rospy.init_node('ros_controller', anonymous=False)
         
         self.joint_goal_pub = rospy.Publisher('/joint_goal', Float64MultiArray, queue_size=10)
@@ -18,7 +26,6 @@ class ROSController:
         
         self.q = None
         rospy.Subscriber('/robot/currentstate', RobotState, self.collectStateCallback)
-        self.collecting = True
 
 
     def collectStateCallback(self, data):
@@ -70,10 +77,10 @@ class ROSController:
 
 
     def move_to_position(self, joint_pos, completion_time=1):
-  
-        ha_to_send = self.create_HA(joint_pos=joint_pos, completion_times=[completion_time])
-        self.call_ha(ha_to_send)
-        rospy.loginfo(f"Moved robot to position: {joint_pos}")
+        if not self.debug:
+            ha_to_send = self.create_HA(joint_pos=joint_pos, completion_times=[completion_time])
+            self.call_ha(ha_to_send)
+            rospy.loginfo(f"Moved robot to position: {joint_pos}")
 
 
     def publish_joint_goal(self, joint_pos):
