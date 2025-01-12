@@ -39,10 +39,13 @@ for i, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter
     for modelname, model in models.items():
         print(f' --- Training Model "{modelname}" ---')
         model.train(X_train, y_train, X_test, y_test)
-        print(" --- Evaluating Model ---\n")
+        print(" --- Evaluating Model ---")
         predictions = model.predict(X_val)
         for metricname, metric in metrics.items():
-            results.append([i, modelname, metricname, metric(y_val, predictions)])
+            res = metric(y_val, predictions)
+            print(f"{metricname}: {res:.6f}")
+            results.append([i, modelname, metricname, res])
+        print()
 
 resultsdf = pd.DataFrame(results, columns=["Iteration", "Modelname", "Metricname", "Result"])
-resultsdf.to_csv("./results.csv")
+resultsdf.to_csv("./results_multilayercnn.csv")

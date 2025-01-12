@@ -33,16 +33,13 @@ def read_data(path="./data",
     X4 = np.zeros((output_datapoints, outputlength_samples))
     y = np.full((output_datapoints, 2), np.nan)
 
-    for i, file in enumerate(inputfiles):
-        if file.split(".")[1] != "wav":
-            continue
-        sr, data = scipy.io.wavfile.read(path + "/" + file)
-        idx = int(file.split(".")[0])
+    for idx in labels.idx:
+        sr, data = scipy.io.wavfile.read(f"{path}/{idx}.wav")
         if sr != sample_rate:
-            raise(f"Samplerate of {file} is {sr} instead of {sample_rate}")
+            raise(f"Samplerate of {idx}.wav is {sr} instead of {sample_rate}")
         
         if len(data) < req_inputlength:
-            raise(f"File {file} is not long enough")
+            raise(f"File {idx}.wav is not long enough")
 
         # X_long = np.vstack((X_long, data[:,0]))
         start_of_block = (len(data) - req_inputlength) // 2
@@ -50,11 +47,12 @@ def read_data(path="./data",
         data_block2 = data[start_of_block:start_of_block+req_inputlength, 2]
         data_block3 = data[start_of_block:start_of_block+req_inputlength, 3]
         data_block4 = data[start_of_block:start_of_block+req_inputlength, 4]
+        i = idx
         X1[i*split_into:(i+1)*split_into, :] = data_block1.reshape((split_into, outputlength_samples))
         X2[i*split_into:(i+1)*split_into, :] = 0.5*(data_block1 + data_block2).reshape((split_into, outputlength_samples))
         X3[i*split_into:(i+1)*split_into, :] = 0.5*(data_block1 + data_block3).reshape((split_into, outputlength_samples))
         X4[i*split_into:(i+1)*split_into, :] = 0.5*(data_block1 + data_block4).reshape((split_into, outputlength_samples))
-        y[i*split_into:(i+1)*split_into, :] = np.array((idx, labels.iloc[idx][label_column]))
+        y[i*split_into:(i+1)*split_into, :] = np.array((idx, labels.loc[labels.idx==idx, label_column].item()))
 
     if apply_fft:
         print("applying FFT")
