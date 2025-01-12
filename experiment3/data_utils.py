@@ -8,7 +8,7 @@ def get_labels(path):
     return pd.read_csv(path, dtype={"notes":"str"})
 
 def read_data(path="./data", 
-            inputlength_s=5, 
+            inputlength_s=4, 
             sample_rate=16000, 
             outputlength_samples=2048, 
             apply_fft=True,
@@ -16,10 +16,8 @@ def read_data(path="./data",
     
     labels = get_labels(label_file)
 
-    inputfiles = os.listdir(path)
-
     split_into = (inputlength_s * sample_rate // outputlength_samples)
-    output_datapoints = len(labels.index) * split_into
+    output_datapoints = (np.max(labels.idx)+1) * split_into
     req_inputlength = split_into * outputlength_samples
 
     # X_long = np.zeros((0,80896))
@@ -32,7 +30,7 @@ def read_data(path="./data",
     X4 = np.zeros((output_datapoints, outputlength_samples))
     y = np.full((output_datapoints, 3), np.nan)
 
-    for idx in labels.index:
+    for idx in labels.idx:
         sr, data = scipy.io.wavfile.read(f"{path}/{idx}.wav")
         if sr != sample_rate:
             raise(f"Samplerate of {idx}.wav is {sr} instead of {sample_rate}")
@@ -41,7 +39,7 @@ def read_data(path="./data",
             raise(f"File {idx}.wav is not long enough")
 
         # X_long = np.vstack((X_long, data[:,0]))
-        start_of_block = (len(data) - req_inputlength) // 2
+        start_of_block = 16000 # remove first second
         data_block1 = data[start_of_block:start_of_block+req_inputlength, 1]
         data_block2 = data[start_of_block:start_of_block+req_inputlength, 2]
         data_block3 = data[start_of_block:start_of_block+req_inputlength, 3]
@@ -50,7 +48,7 @@ def read_data(path="./data",
         X2[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block2).reshape((split_into, outputlength_samples))
         X3[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block3).reshape((split_into, outputlength_samples))
         X4[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block4).reshape((split_into, outputlength_samples))
-        y[idx*split_into:(idx+1)*split_into, :] = np.array((idx, labels.iloc[idx]["q_0"], labels.iloc[idx]["q_3"]))
+        y[idx*split_into:(idx+1)*split_into, :] = np.array((idx, labels.loc[labels.idx==idx, "q_0"].item(), labels.loc[labels.idx==idx,"q_3"].item()))
 
     if apply_fft:
         print("applying FFT")
