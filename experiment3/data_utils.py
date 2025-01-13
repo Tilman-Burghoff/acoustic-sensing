@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.io.wavfile
-import os
 import pandas as pd
 
 
@@ -20,23 +19,23 @@ def read_data(path="./data",
     output_datapoints = (np.max(labels.idx)+1) * split_into
     req_inputlength = split_into * outputlength_samples
 
-    # X_long = np.zeros((0,80896))
-
     print(f"Splitting each input into {split_into} datapoints, resulting in {output_datapoints} samples")
 
     X1 = np.zeros((output_datapoints, outputlength_samples))
     X2 = np.zeros((output_datapoints, outputlength_samples))
     X3 = np.zeros((output_datapoints, outputlength_samples))
     X4 = np.zeros((output_datapoints, outputlength_samples))
-    y = np.full((output_datapoints, 3), np.nan)
 
-    for idx in labels.idx:
-        sr, data = scipy.io.wavfile.read(f"{path}/{idx}.wav")
+    y = np.repeat(np.hstack([np.arange(len(labels))[:,None], labels[["q_0", "q_3"]].to_numpy()]), split_into, axis=0)
+
+    for idx, row in labels.iterrows():
+
+        sr, data = scipy.io.wavfile.read(f"{path}/{row.idx}.wav")
         if sr != sample_rate:
-            raise(f"Samplerate of {idx}.wav is {sr} instead of {sample_rate}")
+            raise(f"Samplerate of {row.idx}.wav is {sr} instead of {sample_rate}")
         
         if len(data) < req_inputlength:
-            raise(f"File {idx}.wav is not long enough")
+            raise(f"File {row.idx}.wav is not long enough")
 
         # X_long = np.vstack((X_long, data[:,0]))
         start_of_block = 16000 # remove first second
@@ -48,7 +47,8 @@ def read_data(path="./data",
         X2[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block2).reshape((split_into, outputlength_samples))
         X3[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block3).reshape((split_into, outputlength_samples))
         X4[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block4).reshape((split_into, outputlength_samples))
-        y[idx*split_into:(idx+1)*split_into, :] = np.array((idx, labels.loc[labels.idx==idx, "q_0"].item(), labels.loc[labels.idx==idx,"q_3"].item()))
+
+    
 
     if apply_fft:
         print("applying FFT")
@@ -63,7 +63,8 @@ def read_data(path="./data",
 
 def k_fold_split(X, y, k_fold=5, seed=0):
     rng = np.random.default_rng(seed)
-    shuffeled_idxs = np.unique(y[:,0])[:-1] # remove nan
+    shuffeled_idxs = np.unique(y[:,0])
+    print(shuffeled_idxs[-1])
     rng.shuffle(shuffeled_idxs)
     block_length = len(shuffeled_idxs)//k_fold
     X_split = []
