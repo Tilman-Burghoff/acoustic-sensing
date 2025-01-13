@@ -9,7 +9,7 @@ from data_utils import read_data, k_fold_iter
 models = {
     "kNN": KNN(10),
     "Linear": Linear(),
-    "SVM": SVM(),
+    #"SVM": SVM(),
     "3-Layer FC": FullyConnected(3),
     "4-Layer FC": FullyConnected(4),
     "5-Layer FC": FullyConnected(5),
@@ -48,8 +48,8 @@ for i, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter
         predictions = model.predict(X_val)
         for metricname, metric in metrics.items():
             for joint in [0,1]: # we use joint 0 and 3, but htis makes indexing easier
-                res = metric(y_val[joint,:], predictions[joint,:])
+                res = metric(y_val[:,joint], predictions[:,joint])
                 print(f"{metricname} at joint {3*joint}: {res:.6f}")
                 with open("results.csv", "a") as f:
-                    f.write(",".join([i, modelname, metricname, joint*3, res])+"\n")
+                    f.write(f"{i},{modelname},{metricname},{joint*3},{res}\n")
         print()
