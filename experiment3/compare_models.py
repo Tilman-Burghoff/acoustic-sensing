@@ -1,5 +1,3 @@
-import numpy as np
-import pandas as pd
 import os
 
 from model_testing_interface import KNN, Linear, SVM, FullyConnected, Convolution
@@ -27,6 +25,8 @@ metrics = {
     "Ratio of Outliers (>= 0.5 rad)": outlier_ratio
 }
 
+filename = "./results_contact_joint0.csv"
+
 X, y = read_data()
 results = []
 k_fold = 10
@@ -35,8 +35,8 @@ seed = 42
 
 print("Beginning Evalution\n")
 
-if not os.path.exists("./results.csv"):
-    with open("results.csv", "x") as f:
+if not os.path.exists(filename):
+    with open(filename, "x") as f:
         f.write("Iteration,Modelname,Metricname,Joint,Result\n")
 
 for i, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter(X, y, k_fold, seed, test_set_size)):
@@ -46,10 +46,11 @@ for i, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter
         model.train(X_train, y_train, X_test, y_test)
         print(" --- Evaluating Model ---")
         predictions = model.predict(X_val)
-        for metricname, metric in metrics.items():
-            for joint in [0,1]: # we use joint 0 and 3, but htis makes indexing easier
-                res = metric(y_val[:,joint], predictions[:,joint])
-                print(f"{metricname} at joint {3*joint}: {res:.6f}")
-                with open("results.csv", "a") as f:
+
+        with open(filename, "a") as f:
+            for metricname, metric in metrics.items():
+                for joint in [0,1]: # we use joint 0 and 3, but htis makes indexing easier
+                    res = metric(y_val[:,joint], predictions[:,joint])
+                    print(f"{metricname} at joint {3*joint}: {res:.6f}")
                     f.write(f"{i},{modelname},{metricname},{joint*3},{res}\n")
         print()
