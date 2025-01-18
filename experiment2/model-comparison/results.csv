@@ -1,0 +1,501 @@
+Iteration,Modelname,Metricname,Result
+0,SVM,Mean Square Error,0.0294048327562466
+0,Linear,Mean Square Error,0.0364745417828899
+0,Linear,R squared,0.8657642304173214
+0,SVM,R squared,0.8917825924180267
+0,Linear,Standard Deviation of Error,0.1907880045155456
+0,SVM,Standard Deviation of Error,0.1714203177565173
+0,SVM,Standard deviation per Recording (avg),0.1259635366727071
+0,Linear,Standard deviation per Recording (avg),0.1510187078904169
+0,Linear,Ratio of Outliers (>= 0.5 rad),0.0133779264214046
+0,SVM,Ratio of Outliers (>= 0.5 rad),0.0100334448160535
+1,SVM,Mean Square Error,0.0454062028615683
+0,3-Layer FC,Mean Square Error,0.0224980012901739
+1,SVM,R squared,0.7311441955552648
+0,3-Layer FC,R squared,0.9172015227707322
+0,3-Layer FC,Standard Deviation of Error,0.1496707795676162
+1,SVM,Standard Deviation of Error,0.211772693611358
+1,SVM,Standard deviation per Recording (avg),0.1137525682146558
+0,3-Layer FC,Standard deviation per Recording (avg),0.121853269636631
+1,SVM,Ratio of Outliers (>= 0.5 rad),0.027870680044593
+0,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0066889632107023
+0,4-Layer FC,Mean Square Error,0.0220256486479927
+2,SVM,Mean Square Error,0.0363174943471198
+0,4-Layer FC,R squared,0.9189399029487484
+2,SVM,R squared,0.8435283447093453
+2,SVM,Standard Deviation of Error,0.190506418320354
+0,4-Layer FC,Standard Deviation of Error,0.1480236738899502
+0,4-Layer FC,Standard deviation per Recording (avg),0.1178549602627754
+2,SVM,Standard deviation per Recording (avg),0.11445334850125
+2,SVM,Ratio of Outliers (>= 0.5 rad),0.0222965440356744
+0,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0089186176142697
+0,3-Channel CNN,Mean Square Error,0.0168424154661477
+3,SVM,Mean Square Error,0.0234731183376221
+0,5-Layer FC,Mean Square Error,0.020389117164004
+0,5-Layer FC,R squared,0.924962763071492
+3,SVM,R squared,0.8381075932864872
+0,3-Channel CNN,R squared,0.9380155447822486
+0,5-Layer FC,Standard Deviation of Error,0.142102316645996
+0,3-Channel CNN,Standard Deviation of Error,0.1258510700936555
+3,SVM,Standard Deviation of Error,0.1527875266444677
+0,5-Layer FC,Standard deviation per Recording (avg),0.1081601530313491
+3,SVM,Standard deviation per Recording (avg),0.1159553224651034
+0,3-Channel CNN,Standard deviation per Recording (avg),0.1108216717839241
+0,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0022296544035674
+3,SVM,Ratio of Outliers (>= 0.5 rad),0.0
+0,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0066889632107023
+0,1-Channel CNN,Mean Square Error,0.0293083856924175
+0,4-Channel CNN,Mean Square Error,0.0123172582907514
+4,SVM,Mean Square Error,0.0343819498947997
+0,1-Channel CNN,R squared,0.8921375426162814
+4,SVM,R squared,0.8655960798604306
+0,4-Channel CNN,R squared,0.9546692963094808
+0,1-Channel CNN,Standard Deviation of Error,0.1710540534334826
+4,SVM,Standard Deviation of Error,0.1850638354682046
+0,4-Channel CNN,Standard Deviation of Error,0.1070646887258182
+0,1-Channel CNN,Standard deviation per Recording (avg),0.1486576348543167
+4,SVM,Standard deviation per Recording (avg),0.1073390718199943
+0,4-Channel CNN,Standard deviation per Recording (avg),0.0894053503870964
+4,SVM,Ratio of Outliers (>= 0.5 rad),0.0189520624303233
+0,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0
+0,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0122630992196209
+0,2-Channel CNN,Mean Square Error,0.0233311698500875
+5,SVM,Mean Square Error,0.0363367257166289
+5,SVM,R squared,0.8896320941071394
+0,2-Channel CNN,R squared,0.9141352464759452
+0,2-Channel CNN,Standard Deviation of Error,0.1479430820269744
+5,SVM,Standard Deviation of Error,0.1869241877936676
+5,SVM,Standard deviation per Recording (avg),0.1353759360089918
+0,2-Channel CNN,Standard deviation per Recording (avg),0.1272105574607849
+0,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0066889632107023
+5,SVM,Ratio of Outliers (>= 0.5 rad),0.0111482720178372
+6,SVM,Mean Square Error,0.0282117182232957
+6,SVM,R squared,0.8828305730313091
+6,SVM,Standard Deviation of Error,0.1665303679712379
+6,SVM,Standard deviation per Recording (avg),0.1180584442538525
+6,SVM,Ratio of Outliers (>= 0.5 rad),0.0044593088071348
+7,SVM,Mean Square Error,0.0239535888208668
+7,SVM,R squared,0.8822807998488085
+7,SVM,Standard Deviation of Error,0.1547401606734351
+7,SVM,Standard deviation per Recording (avg),0.1250516285711347
+7,SVM,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+8,SVM,Mean Square Error,0.0242525925860072
+1,3-Channel CNN,Mean Square Error,0.0233707961147504
+1,Linear,Mean Square Error,0.0615850943436915
+8,SVM,R squared,0.8791708105168978
+1,3-Channel CNN,R squared,0.8616185940695924
+1,Linear,R squared,0.6353469561844307
+1,3-Channel CNN,Standard Deviation of Error,0.1514963578775329
+1,Linear,Standard Deviation of Error,0.2480756738017551
+8,SVM,Standard Deviation of Error,0.1536571273557435
+1,Linear,Standard deviation per Recording (avg),0.1572430643818739
+8,SVM,Standard deviation per Recording (avg),0.1158525820275183
+1,3-Channel CNN,Standard deviation per Recording (avg),0.1017965450882911
+1,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0111482720178372
+1,Linear,Ratio of Outliers (>= 0.5 rad),0.0490523968784838
+8,SVM,Ratio of Outliers (>= 0.5 rad),0.0066889632107023
+9,SVM,Mean Square Error,0.0366283037697409
+1,4-Channel CNN,Mean Square Error,0.0242413462983021
+0,kNN,Mean Square Error,0.106676364519639
+1,3-Layer FC,Mean Square Error,0.039041030955012
+1,4-Channel CNN,R squared,0.8564639575847519
+0,kNN,R squared,0.6074033233148541
+1,3-Layer FC,R squared,0.7688331742743966
+9,SVM,R squared,0.8939530262681806
+1,3-Layer FC,Standard Deviation of Error,0.1954322361442267
+9,SVM,Standard Deviation of Error,0.1895584799413672
+1,4-Channel CNN,Standard Deviation of Error,0.1554887756745666
+0,kNN,Standard Deviation of Error,0.2652685617539525
+1,3-Layer FC,Standard deviation per Recording (avg),0.11724204570055
+1,4-Channel CNN,Standard deviation per Recording (avg),0.109901562333107
+0,kNN,Standard deviation per Recording (avg),0.1178455038877965
+9,SVM,Standard deviation per Recording (avg),0.1213060242351271
+1,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0222965440356744
+9,SVM,Ratio of Outliers (>= 0.5 rad),0.007803790412486
+1,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.007803790412486
+0,kNN,Ratio of Outliers (>= 0.5 rad),0.1460423634336677
+1,4-Layer FC,Mean Square Error,0.034852872809238
+1,4-Layer FC,R squared,0.7936317823160501
+1,4-Layer FC,Standard Deviation of Error,0.1848043611932584
+1,4-Layer FC,Standard deviation per Recording (avg),0.1064162775874137
+1,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0111482720178372
+1,5-Layer FC,Mean Square Error,0.035759504315543
+1,5-Layer FC,R squared,0.7882635038078094
+1,5-Layer FC,Standard Deviation of Error,0.187458425989927
+1,5-Layer FC,Standard deviation per Recording (avg),0.1054129675030708
+1,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0156075808249721
+1,1-Channel CNN,Mean Square Error,0.0533178048443977
+1,1-Channel CNN,R squared,0.6842986109987877
+1,1-Channel CNN,Standard Deviation of Error,0.2284611309184932
+1,1-Channel CNN,Standard deviation per Recording (avg),0.1341737806797027
+1,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.052396878483835
+2,3-Channel CNN,Mean Square Error,0.02107685745732
+1,2-Channel CNN,Mean Square Error,0.0377374303237858
+2,3-Channel CNN,R squared,0.9091916765195672
+1,2-Channel CNN,R squared,0.7765519566057776
+1,2-Channel CNN,Standard Deviation of Error,0.1942527020542205
+2,3-Channel CNN,Standard Deviation of Error,0.1412366240097613
+1,2-Channel CNN,Standard deviation per Recording (avg),0.1369996964931488
+2,3-Channel CNN,Standard deviation per Recording (avg),0.1051746010780334
+1,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0156075808249721
+2,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0100334448160535
+2,4-Channel CNN,Mean Square Error,0.0208791305870648
+2,4-Channel CNN,R squared,0.9100435703861586
+2,4-Channel CNN,Standard Deviation of Error,0.1444937900657441
+2,4-Channel CNN,Standard deviation per Recording (avg),0.1017012894153595
+2,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0089186176142697
+2,Linear,Mean Square Error,0.0666466210849634
+2,Linear,R squared,0.7128571971122147
+2,Linear,Standard Deviation of Error,0.2581089339071516
+2,Linear,Standard deviation per Recording (avg),0.1742965774093416
+2,Linear,Ratio of Outliers (>= 0.5 rad),0.0323299888517279
+2,3-Layer FC,Mean Square Error,0.0316060619108229
+2,3-Layer FC,R squared,0.8638272569925359
+2,3-Layer FC,Standard Deviation of Error,0.1757728688323945
+2,3-Layer FC,Standard deviation per Recording (avg),0.123656116425991
+2,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0055741360089186
+3,3-Channel CNN,Mean Square Error,0.0170388623685499
+2,4-Layer FC,Mean Square Error,0.0329424082420106
+2,4-Layer FC,R squared,0.8580696923190492
+3,3-Channel CNN,R squared,0.8824841933300503
+2,4-Layer FC,Standard Deviation of Error,0.1791702397800487
+3,3-Channel CNN,Standard Deviation of Error,0.1305075811395841
+3,3-Channel CNN,Standard deviation per Recording (avg),0.1071815267205238
+2,4-Layer FC,Standard deviation per Recording (avg),0.1191504746675491
+2,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0066889632107023
+3,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0011148272017837
+2,5-Layer FC,Mean Square Error,0.0320564846238151
+3,4-Channel CNN,Mean Square Error,0.0098489536070471
+2,5-Layer FC,R squared,0.8618866388758573
+3,4-Channel CNN,R squared,0.9320724762632404
+3,4-Channel CNN,Standard Deviation of Error,0.0991848696265827
+2,5-Layer FC,Standard Deviation of Error,0.1779688242134819
+3,4-Channel CNN,Standard deviation per Recording (avg),0.0829185992479324
+2,5-Layer FC,Standard deviation per Recording (avg),0.1175337061285972
+2,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0055741360089186
+3,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0
+2,1-Channel CNN,Mean Square Error,0.0415053745165233
+2,1-Channel CNN,R squared,0.8211766871363466
+2,1-Channel CNN,Standard Deviation of Error,0.1984493038455927
+2,1-Channel CNN,Standard deviation per Recording (avg),0.1658043414354324
+2,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0289855072463768
+2,2-Channel CNN,Mean Square Error,0.0197959266422913
+2,2-Channel CNN,R squared,0.9147104869040243
+2,2-Channel CNN,Standard Deviation of Error,0.140682800913484
+2,2-Channel CNN,Standard deviation per Recording (avg),0.1165015622973442
+2,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0066889632107023
+4,3-Channel CNN,Mean Square Error,0.0240689577326516
+4,3-Channel CNN,R squared,0.905911029396524
+4,3-Channel CNN,Standard Deviation of Error,0.1549125970323195
+4,3-Channel CNN,Standard deviation per Recording (avg),0.0995138436555862
+4,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0089186176142697
+3,Linear,Mean Square Error,0.0436025835526698
+4,4-Channel CNN,Mean Square Error,0.0191319989512116
+4,4-Channel CNN,R squared,0.9252103017130536
+3,Linear,R squared,0.6992761213598585
+3,Linear,Standard Deviation of Error,0.2087297336568382
+4,4-Channel CNN,Standard Deviation of Error,0.1379159512390948
+4,4-Channel CNN,Standard deviation per Recording (avg),0.0979462638497352
+3,Linear,Standard deviation per Recording (avg),0.1574281909724009
+3,Linear,Ratio of Outliers (>= 0.5 rad),0.0100334448160535
+4,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0066889632107023
+3,3-Layer FC,Mean Square Error,0.0187282520310885
+3,3-Layer FC,R squared,0.870832594492117
+3,3-Layer FC,Standard Deviation of Error,0.13650373456256
+3,3-Layer FC,Standard deviation per Recording (avg),0.0976720675826072
+3,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0
+3,4-Layer FC,Mean Square Error,0.0186843543323083
+3,4-Layer FC,R squared,0.8711353537592281
+3,4-Layer FC,Standard Deviation of Error,0.1366848097578694
+3,4-Layer FC,Standard deviation per Recording (avg),0.0920876935124397
+3,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0
+3,5-Layer FC,Mean Square Error,0.0179570409976913
+3,5-Layer FC,R squared,0.8761515814492347
+3,5-Layer FC,Standard Deviation of Error,0.1339519496949995
+3,5-Layer FC,Standard deviation per Recording (avg),0.0910942777991294
+3,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0
+5,3-Channel CNN,Mean Square Error,0.0128248773376395
+3,1-Channel CNN,Mean Square Error,0.0239594436217019
+3,1-Channel CNN,R squared,0.8347534428258252
+5,3-Channel CNN,R squared,0.9610461639794824
+5,3-Channel CNN,Standard Deviation of Error,0.1123554829866679
+3,1-Channel CNN,Standard Deviation of Error,0.1547489230602253
+5,3-Channel CNN,Standard deviation per Recording (avg),0.0948597639799118
+3,1-Channel CNN,Standard deviation per Recording (avg),0.1275768876075744
+3,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0022296544035674
+5,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0022296544035674
+5,4-Channel CNN,Mean Square Error,0.0114079257291854
+3,2-Channel CNN,Mean Square Error,0.0123210124956386
+3,2-Channel CNN,R squared,0.9150228641386268
+5,4-Channel CNN,R squared,0.9653499634741362
+5,4-Channel CNN,Standard Deviation of Error,0.1065661822030235
+3,2-Channel CNN,Standard Deviation of Error,0.1109516756186515
+5,4-Channel CNN,Standard deviation per Recording (avg),0.0832150131464004
+3,2-Channel CNN,Standard deviation per Recording (avg),0.0936482399702072
+5,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0011148272017837
+3,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0
+4,Linear,Mean Square Error,0.0435015400285507
+4,Linear,R squared,0.8299463081693939
+4,Linear,Standard Deviation of Error,0.2070048801970425
+4,Linear,Standard deviation per Recording (avg),0.1404537154283258
+4,Linear,Ratio of Outliers (>= 0.5 rad),0.027870680044593
+4,3-Layer FC,Mean Square Error,0.0313109169772149
+1,kNN,Mean Square Error,0.1734770704539669
+6,3-Channel CNN,Mean Square Error,0.0069330701794113
+4,3-Layer FC,R squared,0.8776011832435716
+6,3-Channel CNN,R squared,0.971205445424286
+1,kNN,R squared,-0.0271794246220378
+6,3-Channel CNN,Standard Deviation of Error,0.0811833168657029
+1,kNN,Standard Deviation of Error,0.3319012009440349
+4,3-Layer FC,Standard Deviation of Error,0.1764682567112128
+1,kNN,Standard deviation per Recording (avg),0.1276532195087126
+4,3-Layer FC,Standard deviation per Recording (avg),0.1115141734480857
+6,3-Channel CNN,Standard deviation per Recording (avg),0.0689625367522239
+1,kNN,Ratio of Outliers (>= 0.5 rad),0.1950947603121516
+4,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0089186176142697
+6,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0
+6,4-Channel CNN,Mean Square Error,0.0118589586085527
+4,4-Layer FC,Mean Square Error,0.0306130891067412
+4,4-Layer FC,R squared,0.8803290913948341
+6,4-Channel CNN,R squared,0.9507471550080148
+4,4-Layer FC,Standard Deviation of Error,0.1734156384610363
+6,4-Channel CNN,Standard Deviation of Error,0.1087003954034583
+4,4-Layer FC,Standard deviation per Recording (avg),0.1024506390094757
+6,4-Channel CNN,Standard deviation per Recording (avg),0.0878257825970649
+6,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0011148272017837
+4,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0144927536231884
+4,5-Layer FC,Mean Square Error,0.0289562830006449
+4,5-Layer FC,R squared,0.8868057815259018
+4,5-Layer FC,Standard Deviation of Error,0.169312976887283
+4,5-Layer FC,Standard deviation per Recording (avg),0.0996711254119873
+4,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0133779264214046
+4,1-Channel CNN,Mean Square Error,0.0317754026817878
+4,1-Channel CNN,R squared,0.8757854427246539
+4,1-Channel CNN,Standard Deviation of Error,0.1767821965865159
+4,1-Channel CNN,Standard deviation per Recording (avg),0.1188851445913314
+4,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0211817168338907
+4,2-Channel CNN,Mean Square Error,0.0298512600926411
+4,2-Channel CNN,R squared,0.8833071890968089
+4,2-Channel CNN,Standard Deviation of Error,0.1726018694736722
+4,2-Channel CNN,Standard deviation per Recording (avg),0.1196234822273254
+4,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0089186176142697
+7,3-Channel CNN,Mean Square Error,0.0173774174091728
+7,3-Channel CNN,R squared,0.914599198750578
+7,3-Channel CNN,Standard Deviation of Error,0.1312136374842939
+7,3-Channel CNN,Standard deviation per Recording (avg),0.1150677949190139
+7,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+7,4-Channel CNN,Mean Square Error,0.012084246660511
+7,4-Channel CNN,R squared,0.940612329035813
+7,4-Channel CNN,Standard Deviation of Error,0.1097886301227873
+7,4-Channel CNN,Standard deviation per Recording (avg),0.0893106162548065
+7,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+5,Linear,Mean Square Error,0.0387867494902861
+5,Linear,R squared,0.8821904771767916
+5,Linear,Standard Deviation of Error,0.1960064756193371
+5,Linear,Standard deviation per Recording (avg),0.153653778760516
+5,Linear,Ratio of Outliers (>= 0.5 rad),0.0144927536231884
+5,3-Layer FC,Mean Square Error,0.0265109699065777
+5,3-Layer FC,R squared,0.9194765027923631
+5,3-Layer FC,Standard Deviation of Error,0.1621799084208184
+5,3-Layer FC,Standard deviation per Recording (avg),0.1319047957658767
+5,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.007803790412486
+5,4-Layer FC,Mean Square Error,0.0211081454204057
+5,4-Layer FC,R squared,0.9358868538266224
+5,4-Layer FC,Standard Deviation of Error,0.1445297493421308
+5,4-Layer FC,Standard deviation per Recording (avg),0.1054475605487823
+5,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0022296544035674
+5,5-Layer FC,Mean Square Error,0.0221880340602311
+8,3-Channel CNN,Mean Square Error,0.0112690127699361
+8,3-Channel CNN,R squared,0.9438564897984671
+5,5-Layer FC,R squared,0.9326068376604858
+5,5-Layer FC,Standard Deviation of Error,0.1470524782402081
+8,3-Channel CNN,Standard Deviation of Error,0.105931225561411
+8,3-Channel CNN,Standard deviation per Recording (avg),0.0922938510775566
+5,5-Layer FC,Standard deviation per Recording (avg),0.0976122543215751
+5,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0022296544035674
+8,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+5,1-Channel CNN,Mean Square Error,0.0318818132079653
+8,4-Channel CNN,Mean Square Error,0.0101038889459126
+8,4-Channel CNN,R squared,0.94966126991857
+5,1-Channel CNN,R squared,0.903163290295576
+8,4-Channel CNN,Standard Deviation of Error,0.1003051240970264
+5,1-Channel CNN,Standard Deviation of Error,0.1757076171060542
+8,4-Channel CNN,Standard deviation per Recording (avg),0.0855574384331703
+5,1-Channel CNN,Standard deviation per Recording (avg),0.1396614164113998
+5,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.007803790412486
+8,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0022296544035674
+5,2-Channel CNN,Mean Square Error,0.0231111313656897
+5,2-Channel CNN,R squared,0.9298030540358048
+5,2-Channel CNN,Standard Deviation of Error,0.1519618088349964
+5,2-Channel CNN,Standard deviation per Recording (avg),0.1137447878718376
+5,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0089186176142697
+9,3-Channel CNN,Mean Square Error,0.0169753775775858
+6,Linear,Mean Square Error,0.0395847488785763
+6,Linear,R squared,0.8355958929515886
+9,3-Channel CNN,R squared,0.950852558410168
+9,3-Channel CNN,Standard Deviation of Error,0.1268605271850041
+6,Linear,Standard Deviation of Error,0.1975886540154889
+6,Linear,Standard deviation per Recording (avg),0.1477155819935606
+9,3-Channel CNN,Standard deviation per Recording (avg),0.1014763563871383
+9,3-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0055741360089186
+6,Linear,Ratio of Outliers (>= 0.5 rad),0.0122630992196209
+6,3-Layer FC,Mean Square Error,0.0210048014445469
+9,4-Channel CNN,Mean Square Error,0.0153356749644666
+9,4-Channel CNN,R squared,0.9555998571394392
+6,3-Layer FC,R squared,0.912762472339723
+6,3-Layer FC,Standard Deviation of Error,0.1449187176875745
+9,4-Channel CNN,Standard Deviation of Error,0.1206149618045178
+9,4-Channel CNN,Standard deviation per Recording (avg),0.0934941247105598
+6,3-Layer FC,Standard deviation per Recording (avg),0.1094154492020607
+6,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0044593088071348
+9,4-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+6,4-Layer FC,Mean Square Error,0.0199801221216924
+6,4-Layer FC,R squared,0.9170181893483524
+6,4-Layer FC,Standard Deviation of Error,0.141104032503089
+6,4-Layer FC,Standard deviation per Recording (avg),0.1027678325772285
+6,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+6,5-Layer FC,Mean Square Error,0.0190460423893055
+6,5-Layer FC,R squared,0.9208976264716274
+6,5-Layer FC,Standard Deviation of Error,0.137951727628165
+6,5-Layer FC,Standard deviation per Recording (avg),0.0971859320998191
+6,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+6,1-Channel CNN,Mean Square Error,0.021787301347488
+6,1-Channel CNN,R squared,0.9095125793518174
+6,1-Channel CNN,Standard Deviation of Error,0.1450456603061395
+6,1-Channel CNN,Standard deviation per Recording (avg),0.1203445270657539
+6,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0044593088071348
+6,2-Channel CNN,Mean Square Error,0.0221495129450836
+6,2-Channel CNN,R squared,0.9080082354832242
+6,2-Channel CNN,Standard Deviation of Error,0.1454338046425283
+6,2-Channel CNN,Standard deviation per Recording (avg),0.1196702867746353
+6,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+7,Linear,Mean Square Error,0.0395637862108135
+7,Linear,R squared,0.8055649488467269
+7,Linear,Standard Deviation of Error,0.19862537488405
+7,Linear,Standard deviation per Recording (avg),0.1618148447964026
+7,Linear,Ratio of Outliers (>= 0.5 rad),0.0133779264214046
+2,kNN,Mean Square Error,0.1053449287217097
+7,3-Layer FC,Mean Square Error,0.0218422016468296
+7,3-Layer FC,R squared,0.8926571493468267
+2,kNN,R squared,0.5461279565155577
+7,3-Layer FC,Standard Deviation of Error,0.1440084113312361
+2,kNN,Standard Deviation of Error,0.2687694340104826
+2,kNN,Standard deviation per Recording (avg),0.1289199830142849
+7,3-Layer FC,Standard deviation per Recording (avg),0.1149397119879722
+2,kNN,Ratio of Outliers (>= 0.5 rad),0.1215161649944258
+7,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0089186176142697
+7,4-Layer FC,Mean Square Error,0.020067008108062
+7,4-Layer FC,R squared,0.9013812852189114
+7,4-Layer FC,Standard Deviation of Error,0.1396251422071755
+7,4-Layer FC,Standard deviation per Recording (avg),0.1066138818860054
+7,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0089186176142697
+7,5-Layer FC,Mean Square Error,0.019973480182278
+7,5-Layer FC,R squared,0.9018409254297136
+7,5-Layer FC,Standard Deviation of Error,0.1395198568123191
+7,5-Layer FC,Standard deviation per Recording (avg),0.1014365628361702
+7,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0066889632107023
+7,1-Channel CNN,Mean Square Error,0.0295483453485187
+7,1-Channel CNN,R squared,0.854785535218479
+7,1-Channel CNN,Standard Deviation of Error,0.1642327862493411
+7,1-Channel CNN,Standard deviation per Recording (avg),0.1414538323879242
+7,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0144927536231884
+7,2-Channel CNN,Mean Square Error,0.0162806126518414
+7,2-Channel CNN,R squared,0.919989413123908
+7,2-Channel CNN,Standard Deviation of Error,0.1274373876704662
+7,2-Channel CNN,Standard deviation per Recording (avg),0.1076027303934097
+7,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+8,Linear,Mean Square Error,0.0355785601652634
+8,Linear,R squared,0.8227435449427011
+8,Linear,Standard Deviation of Error,0.1880096203078843
+8,Linear,Standard deviation per Recording (avg),0.1459855372606243
+8,Linear,Ratio of Outliers (>= 0.5 rad),0.0055741360089186
+8,3-Layer FC,Mean Square Error,0.0158411278909348
+8,3-Layer FC,R squared,0.9210776894564184
+8,3-Layer FC,Standard Deviation of Error,0.1255334420200477
+8,3-Layer FC,Standard deviation per Recording (avg),0.0978119149804115
+8,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0011148272017837
+8,4-Layer FC,Mean Square Error,0.0135501823215832
+8,4-Layer FC,R squared,0.9324914422464756
+8,4-Layer FC,Standard Deviation of Error,0.1163317361393923
+8,4-Layer FC,Standard deviation per Recording (avg),0.0861874669790268
+8,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0
+8,5-Layer FC,Mean Square Error,0.0146685562649437
+8,5-Layer FC,R squared,0.9269195753775604
+8,5-Layer FC,Standard Deviation of Error,0.1198089409467592
+8,5-Layer FC,Standard deviation per Recording (avg),0.0832910984754562
+8,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0
+8,1-Channel CNN,Mean Square Error,0.0286318867498123
+8,1-Channel CNN,R squared,0.8573526662321527
+8,1-Channel CNN,Standard Deviation of Error,0.1685533466058486
+8,1-Channel CNN,Standard deviation per Recording (avg),0.1346397399902343
+8,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.007803790412486
+8,2-Channel CNN,Mean Square Error,0.0127416049237608
+8,2-Channel CNN,R squared,0.9365198673011071
+8,2-Channel CNN,Standard Deviation of Error,0.1100333886872192
+8,2-Channel CNN,Standard deviation per Recording (avg),0.0915924683213234
+8,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0022296544035674
+9,Linear,Mean Square Error,0.0449784468039072
+9,Linear,R squared,0.8697775306031945
+9,Linear,Standard Deviation of Error,0.2115753361036336
+9,Linear,Standard deviation per Recording (avg),0.1496507049661706
+9,Linear,Ratio of Outliers (>= 0.5 rad),0.0144927536231884
+9,3-Layer FC,Mean Square Error,0.0254901026262285
+9,3-Layer FC,R squared,0.9262005617126572
+9,3-Layer FC,Standard Deviation of Error,0.1584651593153626
+9,3-Layer FC,Standard deviation per Recording (avg),0.1225268095731735
+9,3-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0044593088071348
+9,4-Layer FC,Mean Square Error,0.0230522632440567
+9,4-Layer FC,R squared,0.9332586414574566
+9,4-Layer FC,Standard Deviation of Error,0.1512222324256481
+9,4-Layer FC,Standard deviation per Recording (avg),0.1098062247037887
+9,4-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+9,5-Layer FC,Mean Square Error,0.0229561032272102
+9,5-Layer FC,R squared,0.9335370457986646
+9,5-Layer FC,Standard Deviation of Error,0.1514320220240412
+9,5-Layer FC,Standard deviation per Recording (avg),0.1054026633501052
+9,5-Layer FC,Ratio of Outliers (>= 0.5 rad),0.0033444816053511
+9,1-Channel CNN,Mean Square Error,0.0339376468128257
+9,1-Channel CNN,R squared,0.901743068346707
+9,1-Channel CNN,Standard Deviation of Error,0.1830412355762036
+9,1-Channel CNN,Standard deviation per Recording (avg),0.1490170508623123
+9,1-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0178372352285395
+9,2-Channel CNN,Mean Square Error,0.0301460863695971
+9,2-Channel CNN,R squared,0.9127204674982842
+9,2-Channel CNN,Standard Deviation of Error,0.1674552561246768
+9,2-Channel CNN,Standard deviation per Recording (avg),0.1229654401540756
+9,2-Channel CNN,Ratio of Outliers (>= 0.5 rad),0.0133779264214046
+3,kNN,Mean Square Error,0.0670318271105846
+3,kNN,R squared,0.5376863158422622
+3,kNN,Standard Deviation of Error,0.2058245247989448
+3,kNN,Standard deviation per Recording (avg),0.1035632006317897
+3,kNN,Ratio of Outliers (>= 0.5 rad),0.0512820512820512
+4,kNN,Mean Square Error,0.1582393036672659
+4,kNN,R squared,0.3814201114796844
+4,kNN,Standard Deviation of Error,0.3210280392720659
+4,kNN,Standard deviation per Recording (avg),0.1336985943628653
+4,kNN,Ratio of Outliers (>= 0.5 rad),0.1527313266443701
+5,kNN,Mean Square Error,0.0685589967804934
+5,kNN,R squared,0.7917612895617712
+5,kNN,Standard Deviation of Error,0.244690790448949
+5,kNN,Standard deviation per Recording (avg),0.1256145875133595
+5,kNN,Ratio of Outliers (>= 0.5 rad),0.072463768115942
+6,kNN,Mean Square Error,0.0521943513166163
+6,kNN,R squared,0.7832254602018333
+6,kNN,Standard Deviation of Error,0.2035274975195364
+6,kNN,Standard deviation per Recording (avg),0.1020548342088791
+6,kNN,Ratio of Outliers (>= 0.5 rad),0.0512820512820512
+7,kNN,Mean Square Error,0.0517554864858596
+7,kNN,R squared,0.745649200288363
+7,kNN,Standard Deviation of Error,0.1782107951084634
+7,kNN,Standard deviation per Recording (avg),0.1131472632609547
+7,kNN,Ratio of Outliers (>= 0.5 rad),0.0445930880713489
+8,kNN,Mean Square Error,0.0608178243999714
+8,kNN,R squared,0.6969986444824867
+8,kNN,Standard Deviation of Error,0.2136011549439965
+8,kNN,Standard deviation per Recording (avg),0.1004639609252686
+8,kNN,Ratio of Outliers (>= 0.5 rad),0.0468227424749163
+9,kNN,Mean Square Error,0.0716607864517412
+9,kNN,R squared,0.7925263046243688
+9,kNN,Standard Deviation of Error,0.2243361396836467
+9,kNN,Standard deviation per Recording (avg),0.1308558014024822
+9,kNN,Ratio of Outliers (>= 0.5 rad),0.0802675585284281

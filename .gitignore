@@ -5,6 +5,7 @@ data-recording-scripts/data/
 *.npy
 __pycache__/
 *.txt
-*.csv
+**/samples.csv
 *.zip
 *.png
+*.mp4
