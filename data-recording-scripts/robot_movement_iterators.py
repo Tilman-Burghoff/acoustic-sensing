@@ -103,10 +103,10 @@ class Grid_2d(MoveIter):
                 pose = self.get_position_by_index(self.continue_from - 1)
                 yield pose, 5, False
             for i in range(self.continue_from, positions):
-                if i == 0:
-                    print(f"Moving to position_index {i}")
-                    pose = self.get_position_by_index(i)
-                    yield pose, 5, True
+                # if i == self.continue_from:
+                #    print(f"Moving to position_index {i}")
+                #    pose = self.get_position_by_index(i)
+                #    yield pose, 5, False
                 if log_index:
                     print(f"Moving to position_index {i}")
                 pose = self.get_position_by_index(i)

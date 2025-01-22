@@ -63,7 +63,7 @@ class robotRecording:
             print(f"moving robot to {np.round(position, 2)}")
             self.ros_controller.move_to_position(position, movetime)
 
-            if self.wait_for_move:
+            if self.wait_for_move or not for_recording:
                 sleep(movetime)
             
             if for_recording:
