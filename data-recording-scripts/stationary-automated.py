@@ -2,7 +2,7 @@ import numpy as np
 import os
 import audio_recorder
 from ros_controller import ROSController
-from robot_movement_iterators import Grid_2d
+from robot_movement_iterators import Grid_2d, Move_Once
 from time import sleep
 
 DEBUG = False # if Robot is not available
@@ -88,9 +88,18 @@ class robotRecording:
 
 
 def select_catridge():
-    # TODO select from different movement iterators
-    selected = Grid_2d()
-    print("The Parameters of this Iterator are:")
+    cartridges = {
+        "Move Once": Move_Once(),
+        "Sample 2d Grid": Grid_2d()
+    }
+    cart_list = list(cartridges.keys())
+    print("Available Movement Patterns:")
+    for i, cart in enumerate(cart_list):
+        print(f"{i:2}: {cart}")
+    cart_idx = int(input("Select Movement-pattern by index: "))
+    selected = cartridges[cart_list[cart_idx]]
+
+    print("The Parameters of this Movement Pattern are:")
     parameterlist = selected.get_variable_names()
     for i, name in enumerate(parameterlist):
         print(f"{i:2}: {name} = {selected.__getattribute__(name)}")

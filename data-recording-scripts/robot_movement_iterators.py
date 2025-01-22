@@ -47,6 +47,23 @@ class MoveIter(ABC):
         return val
 
 
+class Move_Once(MoveIter):
+    def __init__(self):
+        self.move_to = np.array([0, 0, 0, -1.5708, 0, 1.5708, 0])
+        self.move_time_s = 5
+        self.public_variable_parsers = {
+            "move_to": self.parse_jointpos,
+            "move_time_s": self.pos_int}
+
+    def preview_iter(self):
+        pass
+
+    def get_iterator(self):
+        def moveiter():
+            yield self.move_to, self.move_time_s, False
+        return moveiter()
+
+
 class Grid_2d(MoveIter):
     def __init__(self):
         # TODO better names
