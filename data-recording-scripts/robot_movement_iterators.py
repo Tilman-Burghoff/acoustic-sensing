@@ -1,8 +1,53 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
+from abc import ABC, abstractmethod
 
-class Grid_2d:
+class MoveIter(ABC):
+    public_variable_parsers = {}
+
+    def get_variable_names(self):
+        return list(self.public_variable_parsers.keys())
+    
+    def set_public_var(self, name, value):
+        assert name in self.public_variable_parsers
+        assert type(value) == str
+        value = self.public_variable_parsers[name](value)
+        return self.__setattr__(name, value)
+    
+    @abstractmethod
+    def preview_iter(self):
+        pass
+
+    @abstractmethod
+    def get_iterator(self):
+        pass
+    
+    #parsers
+    def parse_jointpos(self, value: str):
+        assert value.startswith("np.array([")
+        assert value.endswith("])")
+        vals = [float(val) for val in value[10:-2].split(",")]
+        assert len(vals) == 7
+        return np.array(vals)
+    
+    def parse_jointnum(self, value):
+        joint = int(value)
+        assert 0 <= joint <= 6
+        return joint
+    
+    def pos_int(self, value):
+        val = int(value)
+        assert 0 < val
+        return val
+    
+    def nonneg_int(self, value):
+        val = int(value)
+        assert 0 <= val
+        return val
+
+
+class Grid_2d(MoveIter):
     def __init__(self):
         # TODO better names
         self.start_pos=np.array([-1.5708, 0, 0, -0.3, 0, 1.5708, 0])
@@ -13,12 +58,17 @@ class Grid_2d:
         self.step_x=0.1
         self.step_y=-0.1
         self.continue_from=0
-        self.public_variable_names = ['start_pos', 'joint_x', 'joint_y', 
-                                      'points_x', 'points_y', 'step_x', 
-                                      'step_y', 'continue_from']
+        self.public_variable_parsers = {
+            'start_pos': self.parse_jointpos,
+            'joint_x': self.parse_jointnum,
+            'joint_y': self.parse_jointnum, 
+            'points_x': self.pos_int,
+            'points_y': self.pos_int, 
+            'step_x': float, 
+            'step_y': float, 
+            'continue_from': self.nonneg_int
+        }
         
-    def get_variable_names(self):
-        return self.public_variable_names
     
     def preview_iter(self):
         xs = []

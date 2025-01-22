@@ -99,8 +99,8 @@ def select_catridge():
     while change_vars:
         if var_idx := input("Index of variable to change (enter to finish): "):
             name = parameterlist[int(var_idx)]
-            val = eval(input(f"{name} = "))
-            selected.__setattr__(name, val)
+            val = input(f"{name} = ")
+            selected.set_public_var(name, val)
         else:
             change_vars = False
     print("The values are now:")
