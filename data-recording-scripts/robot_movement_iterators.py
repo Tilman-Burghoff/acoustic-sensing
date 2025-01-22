@@ -92,6 +92,7 @@ class Grid_2d(MoveIter):
         self.pose[self.joint_y] = self.start_pos[self.joint_y] + y_mult * self.step_y
         return self.pose
     
+    # TODO: moving time = 5s for starting position 
     def get_iterator(self, log_index=True):
         self.pose = copy.copy(self.start_pos)
         def grid_2d_iter():
@@ -102,6 +103,10 @@ class Grid_2d(MoveIter):
                 pose = self.get_position_by_index(self.continue_from - 1)
                 yield pose, 5, False
             for i in range(self.continue_from, positions):
+                if i == 0:
+                    print(f"Moving to position_index {i}")
+                    pose = self.get_position_by_index(i)
+                    yield pose, 5, True
                 if log_index:
                     print(f"Moving to position_index {i}")
                 pose = self.get_position_by_index(i)
