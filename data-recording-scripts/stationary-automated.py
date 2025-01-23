@@ -2,7 +2,7 @@ import numpy as np
 import os
 import audio_recorder
 from ros_controller import ROSController
-from robot_movement_iterators import Grid_2d, Move_Once
+from robot_movement_iterators import Grid_2d, Move_Once, Line, Random_Uniform
 from time import sleep
 
 DEBUG = False # if Robot is not available
@@ -90,7 +90,9 @@ class robotRecording:
 def select_catridge():
     cartridges = {
         "Move Once": Move_Once(),
-        "Sample 2d Grid": Grid_2d()
+        "Move and Sample Line": Line(),
+        "Sample 2d Grid": Grid_2d(),
+        "Sample Uniform Random Positions": Random_Uniform()
     }
     cart_list = list(cartridges.keys())
     print("Available Movement Patterns:")

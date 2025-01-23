@@ -36,6 +36,13 @@ class MoveIter(ABC):
         assert 0 <= joint <= 6
         return joint
     
+    def factory_int_greater(self, lowerbound):
+        def int_greater(self, value):
+            val = int(value)
+            assert lowerbound < val
+            return val
+        return int_greater
+    
     def pos_int(self, value):
         val = int(value)
         assert 0 < val
@@ -45,6 +52,21 @@ class MoveIter(ABC):
         val = int(value)
         assert 0 <= val
         return val
+    
+    def preview_iter(self):
+        xs = []
+        ys = []
+        for pose, _, record in self.get_iterator(log_index=False):
+            if record:
+                xs.append(pose[self.joint_x])
+                ys.append(pose[self.joint_y])
+
+        plt.plot(xs, ys)
+        plt.xlabel("q0")
+        plt.ylabel("q3")
+        plt.axis("equal")
+        plt.title("Motion Preview")
+        plt.show()
 
 
 class Move_Once(MoveIter):
@@ -62,6 +84,33 @@ class Move_Once(MoveIter):
         def moveiter():
             yield self.move_to, self.move_time_s, False
         return moveiter()
+
+
+class Line(MoveIter):
+    def __init__(self):
+        self.start_point = np.array([-1.5708, 0, 0, -1.5708, 0, 1.5708, 0])
+        self.end_point = np.array([-1.5708, 0, 0, -1.5708, 0, 1.5708, 0])
+        self.sample_points = 50
+        self.continue_from = 0
+        self.public_variable_parsers = {
+            "start_point": self.parse_jointpos,
+            "end_point": self.parse_jointpos,
+            "sample_points": self.factory_int_greater(1),
+            "continue_from": self.nonneg_int
+        }
+
+    def get_pose_by_idx(self, idx):
+        return self.start_point + (self.end_point - self.start_point) * idx/(self.sample_points - 1)
+
+    def get_iterator(self, log_index=True):
+        def lineiter():
+            startpose = self.get_pose_by_idx(self.continue_from)
+            yield startpose, 5, False
+            for i in range(self.continue_from, self.sample_points):
+                pose = self.get_pose_by_idx(i)
+                if log_index:
+                    print(f"Moving to position_index {i}")
+                yield pose, 1, True
 
 
 class Grid_2d(MoveIter):
@@ -85,22 +134,6 @@ class Grid_2d(MoveIter):
             'step_y': float, 
             'continue_from': self.nonneg_int
         }
-        
-    
-    def preview_iter(self):
-        xs = []
-        ys = []
-        for pose, _, record in self.get_iterator(log_index=False):
-            if record:
-                xs.append(pose[self.joint_x])
-                ys.append(pose[self.joint_y])
-
-        plt.plot(xs, ys)
-        plt.xlabel("q0")
-        plt.ylabel("q3")
-        plt.axis("equal")
-        plt.title("Motion Preview")
-        plt.show()
 
     def get_position_by_index(self, idx):
         y_mult = idx // self.points_x
@@ -130,3 +163,47 @@ class Grid_2d(MoveIter):
                 yield pose, 1, True
 
         return grid_2d_iter()
+    
+
+class Random_Uniform(MoveIter):
+    def __init__(self):
+        self.min_joint_bound = np.array([-1.5708, 0, 0, -0.3, 0, 1.5708, 0])
+        self.max_joint_bound = np.array([1.5708, 0, 0, -2.6, 0, 1.5708, 0])
+        self.no_samples = 50
+        self.seed = None
+        self.continue_from = 0
+        self.generated_seed = None
+        self.public_variable_parsers = {
+            "min_joint_bound": self.parse_jointpos,
+            "max_joint_bound": self.parse_jointpos,
+            "no_samples": self.nonneg_int,
+            "seed": int,
+            "continue_from": self.nonneg_int
+        }
+
+    def generate_seed(self):
+        if self.seed is not None:
+            return self.seed
+        if self.generated_seed is not None:
+            return self.generated_seed
+        self.generated_seed = np.random.default_rng().integers(0, 1000000) # 6 stelliger seed
+        return self.generated_seed
+    
+    def get_iterator(self, log_index=True):
+        seed = self.generate_seed()
+        rng = np.random.default_rng(seed)
+
+        if self.continue_from > 0:
+            for _ in range(self.continue_from):
+                _ = rng.uniform(self.min_joint_bound, self.max_joint_bound)
+        
+        if log_index:
+            print(f"Drawing Samples with seed {seed}")
+        
+        def random_iter():
+            for i in range(self.continue_from, self.no_samples):
+                rand = rng.uniform(self.min_joint_bound, self.max_joint_bound)
+                if log_index:
+                    print(f"Generating sample with sample_index {i}")
+                yield rand, 5, False
+        return random_iter()
