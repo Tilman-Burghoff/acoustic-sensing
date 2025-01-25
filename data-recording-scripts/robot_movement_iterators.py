@@ -37,7 +37,7 @@ class MoveIter(ABC):
         return joint
     
     def factory_int_greater(self, lowerbound):
-        def int_greater(self, value):
+        def int_greater(value):
             val = int(value)
             assert lowerbound < val
             return val
@@ -53,8 +53,10 @@ class MoveIter(ABC):
         assert 0 <= val
         return val
     
+    # TODO: fix preview_iter
     def preview_iter(self):
-        xs = []
+        pass
+        """xs = []
         ys = []
         for pose, _, record in self.get_iterator(log_index=False):
             if record:
@@ -66,7 +68,7 @@ class MoveIter(ABC):
         plt.ylabel("q3")
         plt.axis("equal")
         plt.title("Motion Preview")
-        plt.show()
+        plt.show()"""
 
 
 class Move_Once(MoveIter):
@@ -89,7 +91,7 @@ class Move_Once(MoveIter):
 class Line(MoveIter):
     def __init__(self):
         self.start_point = np.array([-1.5708, 0, 0, -1.5708, 0, 1.5708, 0])
-        self.end_point = np.array([-1.5708, 0, 0, -1.5708, 0, 1.5708, 0])
+        self.end_point = np.array([1.5708, 0, 0, -1.5708, 0, 1.5708, 0])
         self.sample_points = 50
         self.continue_from = 0
         self.public_variable_parsers = {
@@ -111,6 +113,7 @@ class Line(MoveIter):
                 if log_index:
                     print(f"Moving to position_index {i}")
                 yield pose, 1, True
+        return lineiter()
 
 
 class Grid_2d(MoveIter):
@@ -141,8 +144,7 @@ class Grid_2d(MoveIter):
         self.pose[self.joint_x] = self.start_pos[self.joint_x] + x_mult * self.step_x
         self.pose[self.joint_y] = self.start_pos[self.joint_y] + y_mult * self.step_y
         return self.pose
-    
-    # TODO: moving time = 5s for starting position 
+     
     def get_iterator(self, log_index=True):
         self.pose = copy.copy(self.start_pos)
         def grid_2d_iter():
@@ -153,10 +155,6 @@ class Grid_2d(MoveIter):
                 pose = self.get_position_by_index(self.continue_from - 1)
                 yield pose, 5, False
             for i in range(self.continue_from, positions):
-                # if i == self.continue_from:
-                #    print(f"Moving to position_index {i}")
-                #    pose = self.get_position_by_index(i)
-                #    yield pose, 5, False
                 if log_index:
                     print(f"Moving to position_index {i}")
                 pose = self.get_position_by_index(i)
