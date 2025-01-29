@@ -6,15 +6,15 @@ from data_utils import read_data, k_fold_iter
 import numpy as np
 
 models = {
-    #0: KNN(10),
-    #1: Linear(),
+    0: KNN(10),
+    1: Linear(),
     2: FullyConnected(3),
-    #3: FullyConnected(4),
-    #4: FullyConnected(5),
-    #5: Convolution(1),
+    3: FullyConnected(4),
+    4: FullyConnected(5),
+    5: Convolution(1),
     6: Convolution(2),
-    #7: Convolution(3),
-    #8: Convolution(4)
+    7: Convolution(3),
+    8: Convolution(4)
 }
 
 
