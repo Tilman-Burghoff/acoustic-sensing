@@ -1,31 +1,24 @@
 import os
 
 from model_testing_interface import KNN, Linear, SVM, FullyConnected, Convolution
-from model_evaluation_metrics import mean_square_error, R_squared, error_standard_deviation, avg_rec_std, outlier_ratio
+# from model_evaluation_metrics import mean_square_error, R_squared, error_standard_deviation, avg_rec_std, outlier_ratio
 from data_utils import read_data, k_fold_iter
+import numpy as np
 
 models = {
-    "kNN": KNN(10),
-    "Linear": Linear(),
-    #"SVM": SVM(),
-    "3-Layer FC": FullyConnected(3),
-    "4-Layer FC": FullyConnected(4),
-    "5-Layer FC": FullyConnected(5),
-    "1-Channel CNN": Convolution(1),
-    "2-Channel CNN": Convolution(2),
-    "3-Channel CNN": Convolution(3),
-    "4-Channel CNN": Convolution(4)
+    #0: KNN(10),
+    #1: Linear(),
+    2: FullyConnected(3),
+    #3: FullyConnected(4),
+    #4: FullyConnected(5),
+    #5: Convolution(1),
+    6: Convolution(2),
+    #7: Convolution(3),
+    #8: Convolution(4)
 }
 
-metrics = {
-    "Mean Square Error": mean_square_error,
-    "R squared": R_squared,
-    "Standard Deviation of Error": error_standard_deviation,
-    "Standard deviation per Recording (avg)": avg_rec_std,
-    "Ratio of Outliers (>= 0.5 rad)": outlier_ratio
-}
 
-filename = "./results_contact_joint0.csv"
+filename = "./results_raw_outside.csv"
 
 X, y = read_data()
 results = []
@@ -37,20 +30,24 @@ print("Beginning Evalution\n")
 
 if not os.path.exists(filename):
     with open(filename, "x") as f:
-        f.write("Iteration,Modelname,Metricname,Joint,Result\n")
+        f.write("iteration,model_id,true_q0,true_q3,pred_q0,pred_q3\n")
 
-for i, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter(X, y, k_fold, seed, test_set_size)):
-    print(f"Evaluation round {i+1} of {k_fold}\n")
-    for modelname, model in models.items():
-        print(f' --- Training Model "{modelname}" ---')
+for iteration, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter(X, y, k_fold, seed, test_set_size)):
+    print(f"Evaluation round {iteration+1} of {k_fold}\n")
+    for modelid, model in models.items():
+        print(f' --- Training Model with id {modelid} ---')
         model.train(X_train, y_train, X_test, y_test)
         print(" --- Evaluating Model ---")
-        predictions = model.predict(X_val)
-
+        preds = model.predict(X_val)
+        results_to_write = ""
+        for j in range(preds.shape[0]):
+            results_to_write += (
+                f"{iteration},{modelid}," +
+                f"{y_val[j,0]:.8g}," + 
+                f"{y_val[j,1]:.8g}," +
+                f"{preds[j,0]:.8g}," +
+                f"{preds[j,1]:.8g}\n"
+            )
         with open(filename, "a") as f:
-            for metricname, metric in metrics.items():
-                for joint in [0,1]: # we use joint 0 and 3, but htis makes indexing easier
-                    res = metric(y_val[:,joint], predictions[:,joint])
-                    print(f"{metricname} at joint {3*joint}: {res:.6f}")
-                    f.write(f"{i},{modelname},{metricname},{joint*3},{res}\n")
+            f.write(results_to_write)
         print()
