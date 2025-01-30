@@ -90,8 +90,8 @@ class Move_Once(MoveIter):
 
 class Line(MoveIter):
     def __init__(self):
-        self.start_point = np.array([-1.5708, 0, 0, -1.5708, 0, 1.5708, 0])
-        self.end_point = np.array([1.5708, 0, 0, -1.5708, 0, 1.5708, 0])
+        self.start_point = np.array([0, 0, 0, -0.3, 0, 1.5708, 0])
+        self.end_point = np.array([0, 0, 0, -2.8, 0, 1.5708, 0])
         self.sample_points = 50
         self.continue_from = 0
         self.public_variable_parsers = {
