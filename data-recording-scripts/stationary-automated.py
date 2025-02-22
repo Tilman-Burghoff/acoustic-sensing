@@ -117,7 +117,6 @@ def select_catridge():
     print("The values are now:")
     for i, name in enumerate(selected.get_variable_names()):
         print(f"{i:2}: {name} = {selected.__getattribute__(name)}")
-    selected.preview_iter()
     return selected.get_iterator()
 
 

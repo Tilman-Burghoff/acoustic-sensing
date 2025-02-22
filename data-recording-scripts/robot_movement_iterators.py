@@ -1,9 +1,24 @@
+# This file provides multiple different movement patterns for the robot
+# Each Movement pattern is implemented as a constructor class, which returns
+# an Iterator when calling get_iterator. The iterator returns a
+# tuple (np.array, number, bool) in each iteration, which contains the new
+# pose (as 7 DOF joint angles in rad), how long the robot should move there
+# and whether audio should be recorded at that pose. Those Iterators should
+# be interchangeable, therefore thair common api is specified in the abstract
+# base class MoveIter.
+
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
 from abc import ABC, abstractmethod
 
 class MoveIter(ABC):
+    """
+    This class functions as a template for the api each iterator
+    should implement.
+    """
     public_variable_parsers = {}
 
     def get_variable_names(self):
@@ -17,11 +32,11 @@ class MoveIter(ABC):
     
     @abstractmethod
     def preview_iter(self):
-        pass
+        ...
 
     @abstractmethod
     def get_iterator(self):
-        pass
+        ...
     
     #parsers
     def parse_jointpos(self, value: str):
@@ -53,22 +68,6 @@ class MoveIter(ABC):
         assert 0 <= val
         return val
     
-    # TODO: fix preview_iter
-    def preview_iter(self):
-        pass
-        """xs = []
-        ys = []
-        for pose, _, record in self.get_iterator(log_index=False):
-            if record:
-                xs.append(pose[self.joint_x])
-                ys.append(pose[self.joint_y])
-
-        plt.plot(xs, ys)
-        plt.xlabel("q0")
-        plt.ylabel("q3")
-        plt.axis("equal")
-        plt.title("Motion Preview")
-        plt.show()"""
 
 
 class Move_Once(MoveIter):
@@ -78,9 +77,6 @@ class Move_Once(MoveIter):
         self.public_variable_parsers = {
             "move_to": self.parse_jointpos,
             "move_time_s": self.pos_int}
-
-    def preview_iter(self):
-        pass
 
     def get_iterator(self):
         def moveiter():
