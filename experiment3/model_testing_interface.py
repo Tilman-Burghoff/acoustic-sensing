@@ -110,6 +110,44 @@ class FullyConnected(Model):
             return self.linear_stack(x)
         
 
+
+class FullyConnected2(Model):
+    def __init__(self, layers=3):
+        super().__init__()
+        self.Xscaling = StandardScaler()
+        self.yscaling = MinMaxScaler()
+
+    def train(self, X, y, X_test, y_test):
+        X_train = self.Xscaling.fit_transform(np.squeeze(X[:,:,0]))
+        y_train = self.yscaling.fit_transform(y)
+        X_test = self.Xscaling.transform(np.squeeze(X_test[:,:,0]))
+        y_test = self.yscaling.transform(y_test)
+        untrained = self.MLP(X.shape[1])
+        self.model = train_nn(untrained, X_train, y_train, X_test, y_test)
+
+    def predict(self, X):
+        X_test = torch.tensor(self.Xscaling.transform(np.squeeze(X[:,:,0])), dtype=torch.float32)
+        self.model.eval()
+        with torch.no_grad():
+            y_scaled = self.model(X_test).numpy()
+        return self.yscaling.inverse_transform(y_scaled)
+
+    class MLP(nn.Module):
+        def __init__(self, inputdim):
+            super().__init__()
+            self.linear_stack = nn.Sequential(
+                nn.Linear(inputdim, 64),
+                nn.ReLU(),
+                nn.Linear(64, 64),
+                nn.ReLU(),
+                nn.Linear(64,2)
+            )
+            self.optimizer = optim.SGD(self.parameters(), lr=0.005, momentum=0.9, weight_decay=0.01)
+
+        def forward(self, x):
+            return self.linear_stack(x)
+        
+
 class Convolution(Model):
     def __init__(self, channels=1):
         super().__init__()
@@ -158,12 +196,59 @@ class Convolution(Model):
 
 
 
+class SmallCNN(Model):
+    def __init__(self, channels=1):
+        super().__init__()
+        self.channels = channels
+        self.Xscaling = StandardScaler()
+        self.yscaling = MinMaxScaler()
+
+    def train(self, X, y, X_test, y_test):
+        X = X[:,:,:self.channels]
+        X_train = self.Xscaling.fit_transform(X.reshape(-1, X.shape[1])).reshape(-1, X.shape[1], self.channels)
+        y_train = self.yscaling.fit_transform(y)
+        X_test = self.Xscaling.transform(X_test[:,:,:self.channels].reshape(-1, X.shape[1])).reshape(-1, X.shape[1], self.channels)
+        y_test = self.yscaling.transform(y_test)
+        untrained = self.Conv(self.channels)
+        self.model = train_nn(untrained, X_train, y_train, X_test, y_test)
+
+    def predict(self, X):
+        X = X[:,:,:self.channels]
+        X = self.Xscaling.transform(X.reshape(-1, X.shape[1])).reshape(-1, X.shape[1], self.channels)
+        self.model.eval()
+        with torch.no_grad():
+            y_scaled = self.model(torch.tensor(X, dtype=torch.float32)).numpy()
+        return self.yscaling.inverse_transform(y_scaled)
+        
+
+
+    class Conv(nn.Module):
+        def __init__(self, channels):
+            super().__init__()
+            self.conv_relu_stack = nn.Sequential(
+                nn.Conv1d(channels, 8, 7, 3),
+                nn.ReLU(),
+                nn.Conv1d(8, 8, 7, 3),
+                #nn.MaxPool1d(3),
+                nn.ReLU(),
+                nn.Flatten(),
+                nn.Linear(896, 32),
+                nn.ReLU(),
+                nn.Linear(32,2)
+            )
+            self.optimizer = optim.Adam(self.parameters())
+
+        def forward(self, x):
+            x = torch.swapaxes(x, 1, 2)
+            output = self.conv_relu_stack(x)
+            return output
+
 
 def train_nn(network, X, y, X_test, y_test):
     criterion = nn.MSELoss()
 
     # Training loop
-    epochs = 200  # Number of epochs to train
+    epochs = 100  # Number of epochs to train
     batch_size = 64  # Batch size for mini-batch gradient descent
 
     X_train_tensor = torch.tensor(X, dtype=torch.float32)

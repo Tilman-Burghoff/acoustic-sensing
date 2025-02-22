@@ -15,9 +15,10 @@ seed = 42
 
 print("Beginning Evalution\n")
 
+filename = "./MSE_by_pos_contact_joint0.csv"
 
-if not os.path.exists("./MSE_by_pos.csv"):
-    with open("MSE_by_pos.csv", "x") as f:
+if not os.path.exists(filename):
+    with open(filename, "x") as f:
         f.write("Iteration,q_0,q_3,joint,MSE\n")
 
 for i, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter(X, y, k_fold, seed, test_set_size)):
@@ -30,11 +31,12 @@ for i, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter
 
     recordings = np.unique(y_val, axis=0)
     summed_mse = 0
-    with open("MSE_by_pos.csv", "a") as f:
+    with open(filename, "a") as f:
         for rec in recordings:
             indizes, _ = np.nonzero(y_val == rec)
-            mse = np.mean((predictions[indizes, :] - rec[None,:])**2, axis=0) 
-            f.write(f"{i},{rec[0]},{rec[1]},{0},{mse[0]}\n")
-            f.write(f"{i},{rec[0]},{rec[1]},{3},{mse[1]}\n")
-            summed_mse += mse[0] + mse[1]
+            mse0 = np.mean((predictions[indizes, 0] - rec[0])**2) 
+            mse3 = np.mean((predictions[indizes, 1] - rec[1])**2)
+            f.write(f"{i},{rec[0]},{rec[1]},{0},{mse0}\n")
+            f.write(f"{i},{rec[0]},{rec[1]},{3},{mse3}\n")
+            summed_mse += mse0 + mse3
     print(f"Validation loss: {summed_mse/(len(recordings)*2)}\n")

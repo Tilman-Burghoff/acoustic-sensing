@@ -1,26 +1,33 @@
 import os
 
-from model_testing_interface import KNN, Linear, SVM, FullyConnected, Convolution
+from model_testing_interface import KNN, Linear, SVM, FullyConnected, Convolution, FullyConnected2, SmallCNN
 # from model_evaluation_metrics import mean_square_error, R_squared, error_standard_deviation, avg_rec_std, outlier_ratio
 from data_utils import read_data, k_fold_iter
 import numpy as np
 
 models = {
-    0: KNN(10),
-    1: Linear(),
-    2: FullyConnected(3),
-    3: FullyConnected(4),
-    4: FullyConnected(5),
-    5: Convolution(1),
-    6: Convolution(2),
-    7: Convolution(3),
-    8: Convolution(4)
+    #0: KNN(10),
+    #1: Linear(),
+    #2: FullyConnected(3),
+    #3: FullyConnected(4),
+    #4: FullyConnected(5),
+    #5: Convolution(1),
+    #6: Convolution(2),
+    #7: Convolution(3),
+    #8: Convolution(4),
+    #9:                    # small deep dnn
+    #10                    # small 1 lin
+    #11: SmallCNN(1)    # small 2 lin
+    #12: SmallCNN(1),    # small 2 lin no max pool
+    13: SmallCNN(2),
+    14: SmallCNN(3),
+    15: SmallCNN(4)
 }
 
 
-filename = "./results_raw_outside.csv"
+filename = "./results_raw_outside.csv"#"./results_raw_8192_outside.csv"
 
-X, y = read_data()
+X, y = read_data()#outputlength_samples=8192)
 results = []
 k_fold = 10
 test_set_size = 2
