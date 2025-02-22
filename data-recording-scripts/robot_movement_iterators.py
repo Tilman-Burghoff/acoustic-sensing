@@ -10,60 +10,83 @@
 
 
 import numpy as np
-import matplotlib.pyplot as plt
 import copy
 from abc import ABC, abstractmethod
+from typing import List, Iterator, Tuple, Callable
+from numbers import Real as RealNumber
 
 class MoveIter(ABC):
     """
-    This class functions as a template for the api each iterator
-    should implement.
-    """
-    public_variable_parsers = {}
+    This class functions as a template for the api each constructor
+    should implement. Note that due to some revisions the only method
+    each constructor needs to implement is get_iterator.
 
-    def get_variable_names(self):
+    Each constructor exposes its hyperparameters via 
+    get_variable_names, which can then be changed by 
+    set_public_var, which accepts a valid python expression 
+    for that variable's type.
+
+    Once the user is happy with the parameters, an iterator can
+    be obtained with get_iterator. This function should always 
+    return the same iterator, as long as the hyperparameters aren't
+    changed between two function calls. Changing hyperparameters between
+    Iterators is undefined behavior, and a new constructor object should
+    be used instead.
+
+    Other then functioning as a template, this class also implements
+    the get and set methods as well as some useful parsers.
+    """
+
+    public_variable_parsers = {} # Variable names and their parsers.
+
+    def get_variable_names(self) -> List[str]:
+        """ returns a list of the public hyperparameters"""
         return list(self.public_variable_parsers.keys())
     
-    def set_public_var(self, name, value):
+    def set_public_var(self, name: str, value: str):
+        """Sets a hyperparameter, as long as the parser accepts it"""
         assert name in self.public_variable_parsers
         assert type(value) == str
         value = self.public_variable_parsers[name](value)
         return self.__setattr__(name, value)
-    
-    @abstractmethod
-    def preview_iter(self):
-        ...
 
     @abstractmethod
-    def get_iterator(self):
+    def get_iterator(self) -> Iterator[Tuple[np.array, RealNumber, bool]]:
+        """To be implemented by each constructor.
+        
+        Returns an Iterator iterating over the robots positions
+        with a move_time number >0 and a recording bool"""
         ...
     
-    #parsers
-    def parse_jointpos(self, value: str):
+    # parsers
+    def parse_jointpos(self, value: str) -> np.array:
+        """Parse string into 7-DOF joint pos"""
         assert value.startswith("np.array([")
         assert value.endswith("])")
         vals = [float(val) for val in value[10:-2].split(",")]
         assert len(vals) == 7
         return np.array(vals)
     
-    def parse_jointnum(self, value):
+    def parse_jointnum(self, value: str) -> int:
+        """Parse string into int i with 0 <= i <= 6"""
         joint = int(value)
         assert 0 <= joint <= 6
         return joint
     
-    def factory_int_greater(self, lowerbound):
-        def int_greater(value):
+    def factory_int_greater(self, lowerbound: int) -> Callable[[str], int]:
+        """Returns int-parser which checks that int > lowerbound"""
+        def int_greater(value: str) -> int:
             val = int(value)
             assert lowerbound < val
             return val
         return int_greater
     
-    def pos_int(self, value):
+    def pos_int(self, value: str) -> int:
         val = int(value)
         assert 0 < val
         return val
     
-    def nonneg_int(self, value):
+    def nonneg_int(self, value: str) -> int:
         val = int(value)
         assert 0 <= val
         return val
@@ -71,6 +94,7 @@ class MoveIter(ABC):
 
 
 class Move_Once(MoveIter):
+    """Moves robot to move_to in move_time seconds without recording audio"""
     def __init__(self):
         self.move_to = np.array([0, 0, 0, -1.5708, 0, 1.5708, 0])
         self.move_time_s = 5
@@ -85,6 +109,11 @@ class Move_Once(MoveIter):
 
 
 class Line(MoveIter):
+    """Moves robot from start_point to end_point while 
+    recording at sample_points many linearly spaced spots
+    along the way. continue_from can be used to start from a 
+    position along the way by specifying an index.
+    """
     def __init__(self):
         self.start_point = np.array([0, 0, 0, -0.3, 0, 1.5708, 0])
         self.end_point = np.array([0, 0, 0, -2.8, 0, 1.5708, 0])
@@ -113,8 +142,13 @@ class Line(MoveIter):
 
 
 class Grid_2d(MoveIter):
+    """Moves robot through a 2d grid in snake like fashion, while keeping
+    all joints except for joint_x and joint_y in the place specified in start_pos.
+    Moves the two joints by step_x or step_y radians for points_x or points_y steps
+    starting fro start_pos. continue_from can be used to start from a 
+    position along the way by specifying an index.
+    """
     def __init__(self):
-        # TODO better names
         self.start_pos=np.array([-1.5708, 0, 0, -0.3, 0, 1.5708, 0])
         self.joint_x=0
         self.joint_y=3
@@ -160,6 +194,10 @@ class Grid_2d(MoveIter):
     
 
 class Random_Uniform(MoveIter):
+    """Moves the robot to no_samples many randomly generated positions, which
+    lie inbetween min_joint_bound and max_joint_bound. A seed can be specified if needed.
+    continue_from can be used to start from a position along the way by specifying an index.
+    """
     def __init__(self):
         self.min_joint_bound = np.array([-1.5708, 0, 0, -0.3, 0, 1.5708, 0])
         self.max_joint_bound = np.array([1.5708, 0, 0, -2.6, 0, 1.5708, 0])
