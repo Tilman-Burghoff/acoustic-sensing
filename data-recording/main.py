@@ -1,3 +1,9 @@
+# This file provides a CLI to select the parameters for recording samples from the robot
+# It uses audio_recorder.py as a wrapper around pyAudio to record and save
+# data from an audio stream and ros_controller as a wrapper around rospy
+# which sends and recieves messages from a panda controlled with panda_ha.
+# robot_movement_iterators.pycontains different movement patterns the user can select.
+
 import numpy as np
 import os
 from audio_recorder import AudioRecorder# Wrapper around pyaudio
