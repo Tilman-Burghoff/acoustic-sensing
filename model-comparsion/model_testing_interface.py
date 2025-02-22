@@ -1,3 +1,7 @@
+# This file implements different machine learning algorithms in a unified interface 
+# defined in the Model-class. All Models expect X to contain multiple channels
+# (as is the case when using respeaker), but only the CNN uses those channels.
+
 from abc import ABC, abstractmethod
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -9,7 +13,7 @@ from torch import nn
 from torch import optim
 import copy
 
-# Define an abstract class
+
 class Model(ABC):
     @abstractmethod
     def train(self, X, y, X_test, y_test):
