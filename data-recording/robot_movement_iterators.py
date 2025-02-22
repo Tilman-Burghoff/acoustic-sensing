@@ -8,12 +8,13 @@
 # base class MoveIter.
 
 
-
 import numpy as np
 import copy
 from abc import ABC, abstractmethod
-from typing import List, Iterator, Tuple, Callable
+from typing import List, Iterator, Tuple, Callable, Any, NewType
 from numbers import Real as RealNumber
+
+JointPos = NewType("JointPos", Any) # Type For the 7 DOF joint pos
 
 class MoveIter(ABC):
     """
@@ -51,7 +52,7 @@ class MoveIter(ABC):
         return self.__setattr__(name, value)
 
     @abstractmethod
-    def get_iterator(self) -> Iterator[Tuple[np.array, RealNumber, bool]]:
+    def get_iterator(self) -> Iterator[Tuple[JointPos, RealNumber, bool]]:
         """To be implemented by each constructor.
         
         Returns an Iterator iterating over the robots positions
@@ -59,7 +60,7 @@ class MoveIter(ABC):
         ...
     
     # parsers
-    def parse_jointpos(self, value: str) -> np.array:
+    def parse_jointpos(self, value: str) -> JointPos:
         """Parse string into 7-DOF joint pos"""
         assert value.startswith("np.array([")
         assert value.endswith("])")
