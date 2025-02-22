@@ -1,10 +1,15 @@
+# This file contains the code to compare different models on the recorded training
+# data in a k-fold train-test-split. model_testing_interface.py provides the models
+# in an unified interface (train() and test()). data_utils provides helper functions 
+# to read the recorded data and perform a train-test split.
+# This implementation writes the raw resuöts into a csv-file
+
 import os
 
-from model_testing_interface import KNN, Linear, SVM, FullyConnected, Convolution
-# from model_evaluation_metrics import mean_square_error, R_squared, error_standard_deviation, avg_rec_std, outlier_ratio
+from model_testing_interface import KNN, Linear, FullyConnected, Convolution
 from data_utils import read_data, k_fold_iter
-import numpy as np
 
+# Models selected for comparison
 models = {
     0: KNN(10),
     1: Linear(),
@@ -17,11 +22,13 @@ models = {
     8: Convolution(4)
 }
 
-
-filename = "./results_raw_outside.csv"
+# output file, will be created if it doesn't exist, otherwise new data is appended
+filename = "./results_raw_outside.csv" 
 
 X, y = read_data()
 results = []
+
+# hyperparameters, the test set is only used for the neural networks to selcted the best epoch
 k_fold = 10
 test_set_size = 2
 seed = 42
@@ -39,6 +46,8 @@ for iteration, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_f
         model.train(X_train, y_train, X_test, y_test)
         print(" --- Evaluating Model ---")
         preds = model.predict(X_val)
+
+        # concat results to only do one expensive write operation
         results_to_write = ""
         for j in range(preds.shape[0]):
             results_to_write += (
