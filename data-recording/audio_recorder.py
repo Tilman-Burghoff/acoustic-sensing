@@ -3,13 +3,19 @@ import wave
 from math import ceil
 
 class AudioRecorder:
+    """Small wrapper around pyaudio to record and save audio streams from a
+    device selected by the user.
+    """
     FORMAT = pyaudio.paInt16
     CHUNK = 1024
 
     def __init__(self):
-        self.setup_recording()
+        self._setup_recording()
     
-    def setup_recording(self):
+    def _setup_recording(self):
+        """Prompts user to select a audio device and the number of channels used 
+        and sets up pyaudio
+        """
         self.audio = pyaudio.PyAudio()
         print("Listing audio devices: ")
         print("index  name")
@@ -28,10 +34,15 @@ class AudioRecorder:
             self.channels = max(1, min(int(channels), max_input_channels))
         else:
             self.channels = max_input_channels
-
-        
+    
 
     def create_recording(self, length, filename):
+        """Creates a recording with the previously selected device.
+        
+        Parameters:
+        length >= 0: Length of the recording in seconds.
+        filename: Path pf the file to save the recording to.
+        """
         stream = self.audio.open(
             format=self.FORMAT,
             channels=self.channels,
