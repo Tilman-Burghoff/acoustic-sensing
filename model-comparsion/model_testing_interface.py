@@ -136,6 +136,10 @@ class Convolution(Model):
     had one linear layer, but in our early experiments the second layer
     drastically improved the performance.
 
+    Note that the network expects the input to be 1025 dimensional. If
+    the input has a different dimension, the input size of the linear layer
+    after the nn.flatten layer has to be changed accordingly.
+
     This model is trained using ADAM.
     """
     def __init__(self, channels=1):

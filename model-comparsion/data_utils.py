@@ -1,9 +1,13 @@
+# This file implements some helper functions to deal with data i/o and
+# to perform the train-test splits.
+
 import numpy as np
 import scipy.io.wavfile
 import pandas as pd
 
 
 def get_labels(path):
+    """Read the sample metadata."""
     return pd.read_csv(path, dtype={"notes":"str"})
 
 def read_data(path="./data", 
@@ -14,6 +18,7 @@ def read_data(path="./data",
             apply_fft=True,
             entangle_channels=True,
             label_file="./data/samples.csv"):
+    """Reads in data and preprocesses it, by splitting it into chunks and applying fft."""
     
     labels = get_labels(label_file)
 
@@ -39,8 +44,7 @@ def read_data(path="./data",
         if len(data) < req_inputlength:
             raise(f"File {row.idx}.wav is not long enough")
 
-        # X_long = np.vstack((X_long, data[:,0]))
-        start_of_block = 16000 # remove first second
+        start_of_block = 16000 # remove first second, since that contains sound of the robot moving
         data_block1 = data[start_of_block:start_of_block+req_inputlength, 1]
         data_block2 = data[start_of_block:start_of_block+req_inputlength, 2]
         data_block3 = data[start_of_block:start_of_block+req_inputlength, 3]
@@ -73,6 +77,10 @@ def read_data(path="./data",
 
 
 def k_fold_split(X, y, k_fold=5, seed=0):
+    """Splits the data into k sets of the same size, while
+    making sure that data belonging to the same pose ends up
+    in the same set (to avoid mixing training and test data).
+    """
     rng = np.random.default_rng(seed)
     shuffeled_idxs = np.unique(y[:,0])
     print(shuffeled_idxs[-1])
@@ -89,6 +97,9 @@ def k_fold_split(X, y, k_fold=5, seed=0):
 
 
 def k_fold_iter(X, y, k_fold=5, seed=0, val_set_size=0):
+    """Provides an iterator going through the data which
+    returns a train, test and if needed validation set.
+    """
     X_split, y_split = k_fold_split(X, y, k_fold, seed)
     for i in range(k_fold-val_set_size):
         train_X = np.concatenate(X_split[:i]+X_split[i+val_set_size+1:], axis=0)

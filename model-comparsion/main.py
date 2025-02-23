@@ -2,7 +2,7 @@
 # data in a k-fold train-test-split. model_testing_interface.py provides the models
 # in an unified interface (train() and test()). data_utils provides helper functions 
 # to read the recorded data and perform a train-test split.
-# This implementation writes the raw resuöts into a csv-file
+# This implementation writes the raw results into a csv-file
 
 import os
 
