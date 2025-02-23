@@ -1,6 +1,10 @@
 # This file implements different machine learning algorithms in a unified interface 
 # defined in the Model-class. All Models expect X to contain multiple channels
 # (as is the case when using respeaker), but only the CNN uses those channels.
+# All models apply standard scaling as a preprocessing step. Only the neural
+# networks use the split train and test sets to select the optimal epoch. For
+# the other models, both sets are concatenated before training. All neural
+# networks are trained by the train_nn function.
 
 from abc import ABC, abstractmethod
 import numpy as np
@@ -26,6 +30,7 @@ class Model(ABC):
 
 
 class Linear(Model):
+    """Wrapper around sklearns linear regression"""
     def __init__(self):
         super().__init__()
         self.scaling = StandardScaler()
@@ -42,6 +47,7 @@ class Linear(Model):
         return self.regression.predict(X_test)
     
 class KNN(Model):
+    """Wrapper around sklearns k-nearest neighbour regression."""
     def __init__(self, n_neighours):
         super().__init__()
         self.scaling = StandardScaler()
@@ -58,6 +64,7 @@ class KNN(Model):
         return self.regression.predict(X_test)
     
 class SVM(Model):
+    """Wrapper around sklearns support vector regression, unused."""
     def __init__(self):
         super().__init__()
         self.scaling = StandardScaler()
@@ -75,6 +82,14 @@ class SVM(Model):
 
 
 class FullyConnected(Model):
+    """This class serves as a wrapper around a dense neural network, with the 
+    number of layers (including in and output layer) given during initialization.
+
+    The network has one inputlayer, then max(1, layers - 2) hidden layers
+    of size 64, and then one outputlayer of size 2.
+
+    It is trained with SGD with a small weight decay.
+    """
     def __init__(self, layers=3):
         super().__init__()
         self.hidden_layers = layers - 2
@@ -82,6 +97,7 @@ class FullyConnected(Model):
         self.yscaling = MinMaxScaler()
 
     def train(self, X, y, X_test, y_test):
+        # Scaling is only trained on the test set
         X_train = self.Xscaling.fit_transform(np.squeeze(X[:,:,0]))
         y_train = self.yscaling.fit_transform(y)
         X_test = self.Xscaling.transform(np.squeeze(X_test[:,:,0]))
@@ -99,13 +115,10 @@ class FullyConnected(Model):
     class MLP(nn.Module):
         def __init__(self, inputdim, hidden_layers: int):
             super().__init__()
-            if hidden_layers < 2:
-                model = [nn.Linear(inputdim, 64), nn.ReLU()]
-            else:
-                model = [nn.Linear(inputdim, 512), nn.ReLU(), nn.Linear(512,64), nn.ReLU()]
-                for _ in range(hidden_layers-2):
-                    model.append(nn.Linear(64, 64))
-                    model.append(nn.ReLU())
+            model = [nn.Linear(inputdim, 64), nn.ReLU()]
+            for _ in range(hidden_layers-1):
+                model.append(nn.Linear(64, 64))
+                model.append(nn.ReLU())
             model.append(nn.Linear(64, 2))
             self.linear_stack = nn.Sequential(*model)
             self.optimizer = optim.SGD(self.parameters(), lr=0.005, momentum=0.9, weight_decay=0.01)
@@ -115,6 +128,16 @@ class FullyConnected(Model):
         
 
 class Convolution(Model):
+    """This class serves as a wrapper around a convolutional neural network.
+    The number of inputchannels used is given as a hyperparameter.
+    
+    This network consists of two convolutional layers, whose outputs are 
+    concatenated and then fed into two linear layers. We originally only
+    had one linear layer, but in our early experiments the second layer
+    drastically improved the performance.
+
+    This model is trained using ADAM.
+    """
     def __init__(self, channels=1):
         super().__init__()
         self.channels = channels
@@ -164,11 +187,18 @@ class Convolution(Model):
 
 
 def train_nn(network, X, y, X_test, y_test):
+    """This function expects a pytorch neural network, which
+    additionally implements a network.optimizer object that
+    can be used for the gradient decent step.
+    
+    It trains the model for 200 epochs and selects the epoch
+    where the model performs best on the test set.
+    """
     criterion = nn.MSELoss()
 
-    # Training loop
-    epochs = 200  # Number of epochs to train
-    batch_size = 64  # Batch size for mini-batch gradient descent
+    # Hyperparameters
+    epochs = 200
+    batch_size = 64
 
     X_train_tensor = torch.tensor(X, dtype=torch.float32)
     y_train_tensor = torch.tensor(y, dtype=torch.float32)
@@ -176,14 +206,15 @@ def train_nn(network, X, y, X_test, y_test):
     X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
     y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
 
+    # For model selection
     best_score = 1
     best_model = copy.deepcopy(network)
 
 
     for epoch in range(epochs):
         nanloss = 0
-        network.train()  # Set the model to training mode
-        permutation = torch.randperm(X_train_tensor.size(0))  # Shuffle the data
+        network.train() 
+        permutation = torch.randperm(X_train_tensor.size(0))
         for i in range(0, X_train_tensor.size(0), batch_size):
             indices = permutation[i:i+batch_size]
             batch_x, batch_y = X_train_tensor[indices], y_train_tensor[indices]
@@ -194,16 +225,21 @@ def train_nn(network, X, y, X_test, y_test):
             loss = criterion(outputs, batch_y)
 
             if not torch.isnan(loss):
+                # In early experiments we encountered some nan-values (since the gradients
+                # got too big). We were able to eliminate most of those by tuning the 
+                # training prozess.
                 loss.backward()
                 network.optimizer.step()
             else:
                 nanloss += 1
         
         if nanloss > 0:
+            # if we encounter nan we start from the best checkpoint.
             print(f"Warning: encountered loss=NaN {nanloss} times in epoch {epoch}. That is {nanloss/(X_train_tensor.size(0)/batch_size):.1%} of the batches.")
             network = copy.deepcopy(best_model)
             continue
     
+        # Evaluate the model on the test set to select the best performing one
         network.eval()
         test_loss = criterion(network(X_test_tensor), y_test_tensor)
 
