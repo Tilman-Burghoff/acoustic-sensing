@@ -2,7 +2,9 @@
 This git consists of two main programs. The folder data-recording contains 
 the necessary scripts to control the robot and record audio data, while the folder
 model-comparison contains the scripts to train and compare different machine learning models 
-on that data.
+on that data. Finally, the results folder contains the outputs of the model-comparison script 
+on the four datasets we collected (different microphone positions) as well as some notebooks 
+showing examples of how to compare them.
 
 ## Data Recording
 The main.py function implements a CLI that should be straight-forward to use.
