@@ -12,13 +12,32 @@ def get_labels(path):
 
 def read_data(path="./data", 
             inputlength_s=4, 
+            offset_s = 1,
             sample_rate=16000, 
             outputlength_samples=2048, 
             normalize=False,
-            apply_fft=True,
             entangle_channels=True,
+            apply_fft=True,
             label_file="./data/samples.csv"):
-    """Reads in data and preprocesses it, by splitting it into chunks and applying fft."""
+    """Reads in data and preprocesses it, by splitting it into chunks and applying fft.
+    
+    Parameters:
+    path: directory conaining the recordings
+    inputlength_s > 0: The length of audiodata used from each sample (in s).
+    offset_s: how much is cut off from the beginning (in s).
+    sample_rate: Samplerate shared by each sample
+    outputlength_samples: Length of one datapoint in samples
+    normalize: Whether the audiodata is normalized to lie within [-1,1]
+    entangle_channels: Whether the audio of channel 1 is added to the others
+    apply_fft: Whether the aduio is transformed to a (real) spectrum using fft. 
+            Note that setting this to true results in each datapoint having the 
+            dimension (outputlength_samples)/2+1
+    label_file: Path of the sample metadata csv
+
+    Output:
+    X: Array of dim (samples, length, channels)
+    y: Array of dimension (samples, 3) containing index, q_0 and q_3 for each sample
+    """
     
     labels = get_labels(label_file)
 
@@ -44,7 +63,7 @@ def read_data(path="./data",
         if len(data) < req_inputlength:
             raise(f"File {row.idx}.wav is not long enough")
 
-        start_of_block = 16000 # remove first second, since that contains sound of the robot moving
+        start_of_block = int(sample_rate * offset_s)
         data_block1 = data[start_of_block:start_of_block+req_inputlength, 1]
         data_block2 = data[start_of_block:start_of_block+req_inputlength, 2]
         data_block3 = data[start_of_block:start_of_block+req_inputlength, 3]
@@ -80,6 +99,16 @@ def k_fold_split(X, y, k_fold=5, seed=0):
     """Splits the data into k sets of the same size, while
     making sure that data belonging to the same pose ends up
     in the same set (to avoid mixing training and test data).
+
+    Parameters:
+    X: Data of dimension (samples, length, channels)
+    y: labels of dimension (samples, 3)
+    k_fold: into how many sets the data is split
+    seed: seed used for shuffeling the indizes
+
+    Output:
+    X_split: List of k-flod many arrays containing data from X
+    y_split: List of k-fold many arrays containing labels from y
     """
     rng = np.random.default_rng(seed)
     shuffeled_idxs = np.unique(y[:,0])
@@ -99,6 +128,20 @@ def k_fold_split(X, y, k_fold=5, seed=0):
 def k_fold_iter(X, y, k_fold=5, seed=0, val_set_size=0):
     """Provides an iterator going through the data which
     returns a train, test and if needed validation set.
+
+    Parameters:
+    X: Data of dimension (samples, length, channels)
+    y: labels of dimension (samples, 3)
+    k_fold: into how many sets the data is split
+    seed: seed used for shuffeling the indizes
+    val_set_size: Size of the validation set, if 0 no set is used
+
+    If val_set_size > 0 this provides an iterator returning
+    (X_train, y_train, X_val, y_val, X_test, y_test) and
+    otherwise (X_train, y_train, X_test, y_test) where
+    X_test, y_test always consist of one block, X_val, y_val
+    consists of val_set_size blocks and X_train, y_train consists
+    of k_fold - val_set_size - 1 blocks.
     """
     X_split, y_split = k_fold_split(X, y, k_fold, seed)
     for i in range(k_fold-val_set_size):
