@@ -32,6 +32,26 @@ updating the firmware.
 ### Architecture
 The relevant modules are split into 4 files. ros_controller.py handles the communication
 with the panda_ha instance on the control-PC. audio_recorder.py serves as a wrapper around
-pyAudio and is responsible for recording and saving audiodata. The robot_movement_iterators.py
+pyAudio and is responsible for recording and saving audio. The robot_movement_iterators.py
 file offers different movement patterns the robot can execute to record data.
 Finally, main.py coordinates those components, handles the CLI and takes care of the metadata.
+
+
+## Model Comparison
+This program compares 4 different model architectures: k nearest neighbor regression, linear regression,
+a dense neural network and a convolutional neural network. During an earlier iteration with easier data 
+(only one joint was moved) we also used a support vector machine, but there sklearns implementation 
+wasn't able to find a solution in 10+ minutes.
+
+The program performs a 10-fold train-test split, and writes the raw output of the models on the test data 
+into a csv-file.
+
+### Setup
+Copy the recorded data into the model-comparison folder. If you do not use the standard names, you have to give 
+the foldername and the path to the sample metadata csv-file as arguments to the read_data() function in main.py.
+
+### Architecture
+Models are implemented in model_testing_interface.py. There, all models are implemented as a class with a train
+and a test function as members. Possible hyperparameter can be given during initialization, but the choice is
+kept to a minimum. All models inherit the Model abstract base class.
+
