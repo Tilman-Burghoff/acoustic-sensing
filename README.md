@@ -18,7 +18,14 @@ to true.
 
 Now the robot controller should work. Make sure you select the right audio input in the CLI.
 
-TODO Respeaker anleitung?
+If you want to use the ReSpeaker, make sure that the firmware is up to data and uses the 6-channel version.
+A guide on how to update it can be found [here](https://wiki.seeedstudio.com/ReSpeaker_Mic_Array_v2.0/#update-firmware).
+
+The mic output on channel 0 of the ReSpeaker is preprocessed with among other things a noise suppression algorithm.
+This is detrimental in our case. The two ways around it are to either use the raw mic input on channel 1-4, 
+like we did, or to disable as many of the internal dsp processing as possible.
+This can be done by running the config_usb4_mic_array.sh script in the usb_4_mic_array folder created during
+updating the firmware. 
 
 ### Architecture
 The relevant modules are split into 4 files. ros_controller.py handles the communication
