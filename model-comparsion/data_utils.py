@@ -1,6 +1,7 @@
 # This file implements some helper functions to deal with data i/o and
 # to perform the train-test splits.
 
+import os
 import numpy as np
 import scipy.io.wavfile
 import pandas as pd
@@ -162,3 +163,35 @@ def k_fold_iter(X, y, k_fold=5, seed=0, val_set_size=0):
 
 
 
+def create_outputfile(filename):
+    """Creates file for output if it doesn't exist."""
+    Header = "iteration,model_id,true_q0,true_q3,pred_q0,pred_q3\n"
+    if not os.path.exists(filename):
+        with open(filename, "x") as f:
+            f.write(Header)
+    else:
+        with open(filename, "r") as f:
+            fileheader = f.readline()
+        if fileheader != Header:
+            raise("File exists but doesn't conform to standard.")
+        
+
+def write_output(
+        filename,
+        iteration,
+        modelid,
+        true_y,
+        pred_y
+):
+    """Writes output and metadata to file."""
+    results_to_write = ""
+    for j in range(pred_y.shape[0]):
+        results_to_write += (
+            f"{iteration},{modelid}," +
+            f"{true_y[j,0]:.8g}," + 
+            f"{true_y[j,1]:.8g}," +
+            f"{pred_y[j,0]:.8g}," +
+            f"{pred_y[j,1]:.8g}\n"
+        )
+    with open(filename, "a") as f:
+        f.write(results_to_write)

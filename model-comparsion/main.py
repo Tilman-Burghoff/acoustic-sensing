@@ -4,10 +4,13 @@
 # to read the recorded data and perform a train-test split.
 # This implementation writes the raw results into a csv-file
 
-import os
-
 from model_testing_interface import KNN, Linear, FullyConnected, Convolution
-from data_utils import read_data, k_fold_iter
+from data_utils import read_data, create_outputfile, k_fold_iter, write_output
+
+
+def write_results(results, filename):
+    """Writes results to file."""
+
 
 # Models selected for comparison
 models = {
@@ -25,7 +28,9 @@ models = {
 # output file, will be created if it doesn't exist, otherwise new data is appended
 filename = "./results_raw_outside.csv" 
 
-X, y = read_data()
+# if you don't use the file path as given by the data recording script,
+# use read_data(path=[path_to_folder], label_file=[path_to_metadata])
+X, y = read_data() 
 results = []
 
 # hyperparameters, the test set is only used for the neural networks to selcted the best epoch
@@ -35,9 +40,7 @@ seed = 42
 
 print("Beginning Evalution\n")
 
-if not os.path.exists(filename):
-    with open(filename, "x") as f:
-        f.write("iteration,model_id,true_q0,true_q3,pred_q0,pred_q3\n")
+create_outputfile(filename)
 
 for iteration, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_fold_iter(X, y, k_fold, seed, test_set_size)):
     print(f"Evaluation round {iteration+1} of {k_fold}\n")
@@ -48,15 +51,5 @@ for iteration, (X_train, y_train, X_test, y_test, X_val, y_val) in enumerate(k_f
         preds = model.predict(X_val)
 
         # concat results to only do one expensive write operation
-        results_to_write = ""
-        for j in range(preds.shape[0]):
-            results_to_write += (
-                f"{iteration},{modelid}," +
-                f"{y_val[j,0]:.8g}," + 
-                f"{y_val[j,1]:.8g}," +
-                f"{preds[j,0]:.8g}," +
-                f"{preds[j,1]:.8g}\n"
-            )
-        with open(filename, "a") as f:
-            f.write(results_to_write)
+        write_output(filename, iteration, modelid, y_test, preds)
         print()
