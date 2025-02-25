@@ -8,23 +8,39 @@ def get_labels(path):
     return pd.read_csv(path, dtype={"notes":"str"})
 
 def read_data(path="./data", 
-            inputlength_s=5, 
+            inputlength_s=4, 
+            offset_s = 1,
             sample_rate=16000, 
             outputlength_samples=2048, 
             normalize=False,
+            entangle_channels=True,
             apply_fft=True,
-            label_file="./data/samples.csv",
-            label_column="q_0"):
+            label_file="./data/samples.csv"):
+    """Reads in data and preprocesses it, by splitting it into chunks and applying fft.
+    
+    Parameters:
+    path: directory conaining the recordings
+    inputlength_s > 0: The length of audiodata used from each sample (in s).
+    offset_s: how much is cut off from the beginning (in s).
+    sample_rate: Samplerate shared by each sample
+    outputlength_samples: Length of one datapoint in samples
+    normalize: Whether the audiodata is normalized to lie within [-1,1]
+    entangle_channels: Whether the audio of channel 1 is added to the others
+    apply_fft: Whether the aduio is transformed to a (real) spectrum using fft. 
+            Note that setting this to true results in each datapoint having the 
+            dimension (outputlength_samples)/2+1
+    label_file: Path of the sample metadata csv
+
+    Output:
+    X: Array of dim (samples, length, channels)
+    y: Array of dimension (samples, 2) containing index and q_0 for each sample
+    """
     
     labels = get_labels(label_file)
 
-    inputfiles = os.listdir(path)
-
     split_into = (inputlength_s * sample_rate // outputlength_samples)
-    output_datapoints = len(inputfiles) * split_into
+    output_datapoints = (np.max(labels.idx)+1) * split_into
     req_inputlength = split_into * outputlength_samples
-
-    # X_long = np.zeros((0,80896))
 
     print(f"Splitting each input into {split_into} datapoints, resulting in {output_datapoints} samples")
 
@@ -32,28 +48,33 @@ def read_data(path="./data",
     X2 = np.zeros((output_datapoints, outputlength_samples))
     X3 = np.zeros((output_datapoints, outputlength_samples))
     X4 = np.zeros((output_datapoints, outputlength_samples))
-    y = np.full((output_datapoints, 2), np.nan)
 
-    for idx in labels.idx:
-        sr, data = scipy.io.wavfile.read(f"{path}/{idx}.wav")
+    y = np.repeat(np.hstack([np.arange(len(labels))[:,None], labels[["q_0"]].to_numpy()]), split_into, axis=0)
+
+    for idx, row in labels.iterrows():
+
+        sr, data = scipy.io.wavfile.read(f"{path}/{row.idx}.wav")
         if sr != sample_rate:
-            raise(f"Samplerate of {idx}.wav is {sr} instead of {sample_rate}")
+            raise(f"Samplerate of {row.idx}.wav is {sr} instead of {sample_rate}")
         
         if len(data) < req_inputlength:
-            raise(f"File {idx}.wav is not long enough")
+            raise(f"File {row.idx}.wav is not long enough")
 
-        # X_long = np.vstack((X_long, data[:,0]))
-        start_of_block = (len(data) - req_inputlength) // 2
+        start_of_block = int(sample_rate * offset_s)
         data_block1 = data[start_of_block:start_of_block+req_inputlength, 1]
         data_block2 = data[start_of_block:start_of_block+req_inputlength, 2]
         data_block3 = data[start_of_block:start_of_block+req_inputlength, 3]
         data_block4 = data[start_of_block:start_of_block+req_inputlength, 4]
-        i = idx
-        X1[i*split_into:(i+1)*split_into, :] = data_block1.reshape((split_into, outputlength_samples))
-        X2[i*split_into:(i+1)*split_into, :] = 0.5*(data_block1 + data_block2).reshape((split_into, outputlength_samples))
-        X3[i*split_into:(i+1)*split_into, :] = 0.5*(data_block1 + data_block3).reshape((split_into, outputlength_samples))
-        X4[i*split_into:(i+1)*split_into, :] = 0.5*(data_block1 + data_block4).reshape((split_into, outputlength_samples))
-        y[i*split_into:(i+1)*split_into, :] = np.array((idx, labels.loc[labels.idx==idx, label_column].item()))
+
+        X1[idx*split_into:(idx+1)*split_into, :] = data_block1.reshape((split_into, outputlength_samples))
+        if entangle_channels:
+            X2[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block2).reshape((split_into, outputlength_samples))
+            X3[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block3).reshape((split_into, outputlength_samples))
+            X4[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block4).reshape((split_into, outputlength_samples))
+        else:
+            X2[idx*split_into:(idx+1)*split_into, :] = data_block2.reshape((split_into, outputlength_samples))
+            X3[idx*split_into:(idx+1)*split_into, :] = data_block3.reshape((split_into, outputlength_samples))
+            X4[idx*split_into:(idx+1)*split_into, :] = data_block4.reshape((split_into, outputlength_samples))
 
     if normalize:
         X1 = X1 / np.max(np.abs(X1))
@@ -106,4 +127,33 @@ def k_fold_iter(X, y, k_fold=5, seed=0, val_set_size=0):
         yield train_X, train_y, test_X, test_y, X_split[i], y_split[i]
 
 
+def create_outputfile(filename):
+    """Creates file for output if it doesn't exist."""
+    Header = "iteration,model_id,true_q0,pred_q0\n"
+    if not os.path.exists(filename):
+        with open(filename, "x") as f:
+            f.write(Header)
+    else:
+        with open(filename, "r") as f:
+            fileheader = f.readline()
+        if fileheader != Header:
+            raise("File exists but doesn't conform to standard.")
+        
 
+def write_output(
+        filename,
+        iteration,
+        modelid,
+        true_y,
+        pred_y
+):
+    """Writes output and metadata to file."""
+    results_to_write = ""
+    for j in range(pred_y.shape[0]):
+        results_to_write += (
+            f"{iteration},{modelid}," +
+            f"{true_y[j]:.8g}," +
+            f"{pred_y[j]:.8g}\n"
+        )
+    with open(filename, "a") as f:
+        f.write(results_to_write)

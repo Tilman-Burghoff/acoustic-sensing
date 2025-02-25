@@ -69,6 +69,7 @@ def read_data(path="./data",
         data_block2 = data[start_of_block:start_of_block+req_inputlength, 2]
         data_block3 = data[start_of_block:start_of_block+req_inputlength, 3]
         data_block4 = data[start_of_block:start_of_block+req_inputlength, 4]
+        
         X1[idx*split_into:(idx+1)*split_into, :] = data_block1.reshape((split_into, outputlength_samples))
         if entangle_channels:
             X2[idx*split_into:(idx+1)*split_into, :] = 0.5*(data_block1 + data_block2).reshape((split_into, outputlength_samples))
