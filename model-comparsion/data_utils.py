@@ -1,5 +1,5 @@
 # This file implements some helper functions to deal with data i/o and
-# to perform the train-test splits.
+# to perform the train-test splits, for data to predict two joint angles.
 
 import os
 import numpy as np
@@ -23,14 +23,14 @@ def read_data(path="./data",
     """Reads in data and preprocesses it, by splitting it into chunks and applying fft.
     
     Parameters:
-    path: directory conaining the recordings
+    path: Directory conaining the recordings
     inputlength_s > 0: The length of audiodata used from each sample (in s).
     offset_s: how much is cut off from the beginning (in s).
     sample_rate: Samplerate shared by each sample
     outputlength_samples: Length of one datapoint in samples
     normalize: Whether the audiodata is normalized to lie within [-1,1]
     entangle_channels: Whether the audio of channel 1 is added to the others
-    apply_fft: Whether the aduio is transformed to a (real) spectrum using fft. 
+    apply_fft: Whether the audio is transformed to a (real) spectrum using fft. 
             Note that setting this to true results in each datapoint having the 
             dimension (outputlength_samples)/2+1
     label_file: Path of the sample metadata csv
@@ -59,11 +59,12 @@ def read_data(path="./data",
 
         sr, data = scipy.io.wavfile.read(f"{path}/{row.idx}.wav")
         if sr != sample_rate:
-            raise(f"Samplerate of {row.idx}.wav is {sr} instead of {sample_rate}")
+            raise(f"Sample rate of {row.idx}.wav is {sr} instead of {sample_rate}")
         
         if len(data) < req_inputlength:
             raise(f"File {row.idx}.wav is not long enough")
 
+        # Centering the data block within the available data
         start_of_block = int(sample_rate * offset_s)
         data_block1 = data[start_of_block:start_of_block+req_inputlength, 1]
         data_block2 = data[start_of_block:start_of_block+req_inputlength, 2]
@@ -86,7 +87,7 @@ def read_data(path="./data",
         X4 = X4 / np.max(np.abs(X4))
 
     if apply_fft:
-        print("applying FFT")
+        print("Applying FFT")
         X1 = np.abs(np.fft.rfft(X1))
         X2 = np.abs(np.fft.rfft(X2))
         X3 = np.abs(np.fft.rfft(X3))
@@ -105,7 +106,7 @@ def k_fold_split(X, y, k_fold=5, seed=0):
     X: Data of dimension (samples, length, channels)
     y: labels of dimension (samples, 3)
     k_fold: into how many sets the data is split
-    seed: seed used for shuffeling the indizes
+    seed: seed used for shuffling the indizes
 
     Output:
     X_split: List of k-flod many arrays containing data from X
@@ -134,7 +135,7 @@ def k_fold_iter(X, y, k_fold=5, seed=0, val_set_size=0):
     X: Data of dimension (samples, length, channels)
     y: labels of dimension (samples, 3)
     k_fold: into how many sets the data is split
-    seed: seed used for shuffeling the indizes
+    seed: seed used for shuffling the indizes
     val_set_size: Size of the validation set, if 0 no set is used
 
     If val_set_size > 0 this provides an iterator returning
@@ -160,7 +161,6 @@ def k_fold_iter(X, y, k_fold=5, seed=0, val_set_size=0):
         test_X = np.concatenate(X_split[:i]+X_split[k_fold-val_set_size+i:], axis=0)
         test_y = np.concatenate(y_split[:i]+y_split[k_fold-val_set_size+i:], axis=0)
         yield train_X, train_y, test_X, test_y, X_split[i], y_split[i]
-
 
 
 def create_outputfile(filename):

@@ -1,6 +1,7 @@
 # This file implements different machine learning algorithms in a unified interface 
-# defined in the Model-class. All Models expect X to contain multiple channels
-# (as is the case when using respeaker), but only the CNN uses those channels.
+# defined in the Model-class. 
+# Models predict two joint angles.
+# All Models expect X to contain multiple channels (as is the case when using respeaker), but only the CNN uses those channels.
 # All models apply standard scaling as a preprocessing step. Only the neural
 # networks use the split train and test sets to select the optimal epoch. For
 # the other models, both sets are concatenated before training. All neural
@@ -128,7 +129,8 @@ class FullyConnected(Model):
         
 
 class Convolution(Model):
-    """This class serves as a wrapper around a convolutional neural network.
+    """
+    This class serves as a wrapper around a convolutional neural network.
     The number of inputchannels used is given as a hyperparameter.
     
     This network consists of two convolutional layers, whose outputs are 
@@ -191,7 +193,8 @@ class Convolution(Model):
 
 
 def train_nn(network, X, y, X_test, y_test):
-    """This function expects a pytorch neural network, which
+    """
+    This function expects a pytorch neural network, which
     additionally implements a network.optimizer object that
     can be used for the gradient decent step.
     
@@ -218,7 +221,7 @@ def train_nn(network, X, y, X_test, y_test):
     for epoch in range(epochs):
         nanloss = 0
         network.train() 
-        permutation = torch.randperm(X_train_tensor.size(0))
+        permutation = torch.randperm(X_train_tensor.size(0))  # Shuffle the data
         for i in range(0, X_train_tensor.size(0), batch_size):
             indices = permutation[i:i+batch_size]
             batch_x, batch_y = X_train_tensor[indices], y_train_tensor[indices]
@@ -231,7 +234,7 @@ def train_nn(network, X, y, X_test, y_test):
             if not torch.isnan(loss):
                 # In early experiments we encountered some nan-values (since the gradients
                 # got too big). We were able to eliminate most of those by tuning the 
-                # training prozess.
+                # training process.
                 loss.backward()
                 network.optimizer.step()
             else:
