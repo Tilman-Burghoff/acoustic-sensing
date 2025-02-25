@@ -1,0 +1,12 @@
+python==3.9
+ipykernel
+numpy
+scipy
+pandas
+matplotlib
+seaborn
+scikit-learn
+pytorch
+ros-rospy
+pyAudio
+librosa
