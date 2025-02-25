@@ -1,10 +1,24 @@
-# State Estimation with Acoustic Sensing
-This git consists of two main programs. The folder data-recording contains 
+# Robot State Estimation with Acoustic Sensing
+This project consists of two main programs. The folder data-recording contains 
 the necessary scripts to control the robot and record audio data, while the folder
 model-comparison contains the scripts to train and compare different machine learning models 
-on that data. Finally, the results folder contains the outputs of the model-comparison script 
+on that data. 
+Finally, the results folder contains the outputs of the model-comparison script 
 on the four datasets we collected (different microphone positions) as well as some notebooks 
 showing examples of how to compare them.
+
+## Prerequisites
+This project requires a Python version less than 3.10.
+```sh
+python --version  # Ensure it's below 3.10
+```
+### Requirements  
+1. Install Panda Hybrid Automaton Manager.
+2. Install packages hybrid_automaton_msgs and panda_ha_msgs.
+3. Install dependencies.
+```sh
+pip install -r requirements.txt
+```
 
 ## Data Recording
 The main.py function implements a CLI that should be straight-forward to use.
@@ -14,9 +28,15 @@ to true.
 ### Setup
 1. Connect your computer and the robot control PC to the same network.
 2. Find your and the robots IP.
-3. Set ROS_IP on both machines 
-4. Set ROS_MASTER_URI=\[controllerIP\]:11311 on your machine
-5. Start hybrid automation and check whether the connection works
+```sh
+ifconfig
+```
+3. Set ROS_IP on both machines .
+4. Set ROS_MASTER_URI=\[controllerIP\]:11311 on your machine.
+5. Launch Panda Hybrid Automaton and check whether the connection works.
+```sh
+roslaunch panda_hybrid_automaton_manager panda_ha.launch
+```
 
 Now the robot controller should work. Make sure you select the right audio input in the CLI.
 
@@ -29,8 +49,10 @@ like we did, or to disable as many of the internal dsp processing as possible.
 This can be done by running the config_usb4_mic_array.sh script in the usb_4_mic_array folder created during
 updating the firmware. 
 
-Make sure that you source your ros installation and export the relevant IPs in the terminal where you run the 
-main.py script.
+Make sure that you source your ros installation and export the relevant IPs in the terminal where you run 
+```sh
+python3 main.py
+```
 
 ### Architecture
 The relevant modules are split into 4 files. ros_controller.py handles the communication
@@ -50,9 +72,13 @@ The program performs a 10-fold train-test split, and writes the raw output of th
 into a csv-file.
 
 ### Setup
-Copy the recorded data into the model-comparison folder and run main.py in that context. If you do not use the 
-standard names, you have to give the foldername and the path to the sample metadata csv-file as arguments to 
-the read_data() function in main.py.
+Copy the recorded data into the model-comparison folder and run
+```sh
+python3 main.py
+```
+
+If you do not use the standard names, you have to give the foldername and the path to the sample 
+metadata csv-file as arguments to the read_data() function in main.py.
 
 ### Architecture
 Models are implemented in model_testing_interface.py. There, all models are implemented as a class with a train
@@ -61,3 +87,11 @@ kept to a minimum. All models inherit the Model abstract base class.
 
 The data_utils.py script provides functions to load data and perform a train-test split, as well as to save the
 results to a csv file.
+
+
+## Detailed Analysis
+For further analysis on our data or earlier experiments, have a look at the detailed-analysis folder,
+However, you do not need these scripts for the program to work. Our most important results are in the results folder.
+
+## Datasets
+You can find our collected data in this [folder](https://tubcloud.tu-berlin.de/s/3YSTCpWXXaTaM9S).
