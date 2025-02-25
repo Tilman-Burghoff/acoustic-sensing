@@ -29,6 +29,9 @@ like we did, or to disable as many of the internal dsp processing as possible.
 This can be done by running the config_usb4_mic_array.sh script in the usb_4_mic_array folder created during
 updating the firmware. 
 
+Make sure that you source your ros installation and export the relevant IPs in the terminal where you run the 
+main.py script.
+
 ### Architecture
 The relevant modules are split into 4 files. ros_controller.py handles the communication
 with the panda_ha instance on the control-PC. audio_recorder.py serves as a wrapper around
@@ -47,11 +50,14 @@ The program performs a 10-fold train-test split, and writes the raw output of th
 into a csv-file.
 
 ### Setup
-Copy the recorded data into the model-comparison folder. If you do not use the standard names, you have to give 
-the foldername and the path to the sample metadata csv-file as arguments to the read_data() function in main.py.
+Copy the recorded data into the model-comparison folder and run main.py in that context. If you do not use the 
+standard names, you have to give the foldername and the path to the sample metadata csv-file as arguments to 
+the read_data() function in main.py.
 
 ### Architecture
 Models are implemented in model_testing_interface.py. There, all models are implemented as a class with a train
 and a test function as members. Possible hyperparameter can be given during initialization, but the choice is
 kept to a minimum. All models inherit the Model abstract base class.
 
+The data_utils.py script provides functions to load data and perform a train-test split, as well as to save the
+results to a csv file.
