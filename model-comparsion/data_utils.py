@@ -1,6 +1,7 @@
 # This file implements some helper functions to deal with data i/o and
 # to perform the train-test splits.
 
+import os
 import numpy as np
 import scipy.io.wavfile
 import pandas as pd

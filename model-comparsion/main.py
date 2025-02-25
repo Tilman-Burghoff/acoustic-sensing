@@ -4,8 +4,6 @@
 # to read the recorded data and perform a train-test split.
 # This implementation writes the raw results into a csv-file
 
-import os
-
 from model_testing_interface import KNN, Linear, FullyConnected, Convolution
 from data_utils import read_data, create_outputfile, k_fold_iter, write_output
 
