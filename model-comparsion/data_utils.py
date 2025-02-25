@@ -114,7 +114,6 @@ def k_fold_split(X, y, k_fold=5, seed=0):
     """
     rng = np.random.default_rng(seed)
     shuffeled_idxs = np.unique(y[:,0])
-    print(shuffeled_idxs[-1])
     rng.shuffle(shuffeled_idxs)
     block_length = len(shuffeled_idxs)//k_fold
     X_split = []
