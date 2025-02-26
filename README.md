@@ -73,8 +73,9 @@ wasn't able to find a solution in 10+ minutes.
 The program performs a 10-fold train-test split, and writes the raw output of the models on the test data 
 into a csv-file.
 
-Note that while data-recording saves all joint positions, these programs are hard-coded to use $$q_0$$ and $$q_3$$
-as inputs, since we focused on them. This however can be easily changed in the relevant functions in data_utils.py.
+Note that while data-recording saves all joint positions, these programs are hard-coded to use the jointangles
+$$q_0$$ and $$q_3$$ as inputs, since we focused on them. This however can be easily changed in the relevant 
+functions in data_utils.py (read_data change the jont angles used and create_outputfile to change the csv-header).
 
 ### Setup
 Copy the recorded data into the model-comparison folder and run
