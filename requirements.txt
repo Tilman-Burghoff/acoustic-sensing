@@ -9,3 +9,4 @@ torch
 rospy
 pyAudio
 librosa
+cmcrameri
