@@ -17,8 +17,7 @@ from numbers import Real as RealNumber
 JointPos = NewType("JointPos", Any) # Type For the 7 DOF joint pos
 
 class MoveIter(ABC):
-    """
-    This class functions as a template for the api each constructor
+    """This class functions as a template for the api each constructor
     should implement. Note that due to some revisions the only method
     each constructor needs to implement is get_iterator.
 

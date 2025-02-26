@@ -83,8 +83,7 @@ class SVM(Model):
 
 
 class FullyConnected(Model):
-    """
-    This class serves as a wrapper around a dense neural network, with the 
+    """This class serves as a wrapper around a dense neural network, with the 
     number of layers (including in and output layer) given during initialization.
 
     The network has one inputlayer, then max(1, layers - 2) hidden layers
@@ -133,8 +132,7 @@ class FullyConnected(Model):
         
 
 class Convolution(Model):
-    """
-    This class serves as a wrapper around a convolutional neural network.
+    """This class serves as a wrapper around a convolutional neural network.
     The number of inputchannels used is given as a hyperparameter.
     
     This network consists of two convolutional layers, whose outputs are 
@@ -197,8 +195,7 @@ class Convolution(Model):
 
 
 def train_nn(network, X, y, X_test, y_test):
-    """
-    This function expects a pytorch neural network, which
+    """This function expects a pytorch neural network, which
     additionally implements a network.optimizer object that
     can be used for the gradient decent step.
     
