@@ -12,8 +12,7 @@ from panda_ha_msgs.msg import RobotState
 
 
 class ROSController:
-    """
-    This class provides an interface for controlling a robot using ROS.
+    """This class provides an interface for controlling a robot using ROS.
     It initializes ROS communication, collects joint states, and sends
     commands to move the robot using Panda Hybrid Automaton.
     

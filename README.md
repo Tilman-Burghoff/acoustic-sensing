@@ -6,6 +6,8 @@ on that data.
 Finally, the results folder contains the outputs of the model-comparison script 
 on the four datasets we collected (different microphone positions) as well as some notebooks 
 showing examples of how to compare them.
+Additional experiments we conducted can be found in the detailed-analysis folder. Those might
+provide additional insights, but are not nessecary for the main results of our research.
 
 ## Prerequisites
 This project requires a Python version less than 3.10.
@@ -70,6 +72,10 @@ wasn't able to find a solution in 10+ minutes.
 
 The program performs a 10-fold train-test split, and writes the raw output of the models on the test data 
 into a csv-file.
+
+Note that while data-recording saves all joint positions, these programs are hard-coded to use the jointangles
+$$q_0$$ and $$q_3$$ as inputs, since we focused on them. This however can be easily changed in the relevant 
+functions in data_utils.py (read_data change the jont angles used and create_outputfile to change the csv-header).
 
 ### Setup
 Copy the recorded data into the model-comparison folder and run

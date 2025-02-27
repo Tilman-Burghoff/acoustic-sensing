@@ -1,3 +1,6 @@
+# This file implements some helper functions to deal with data i/o and
+# to perform the train-test splits, for data to predict one joint angle.
+
 import numpy as np
 import scipy.io.wavfile
 import os
@@ -5,6 +8,7 @@ import pandas as pd
 
 
 def get_labels(path):
+    """Read the sample metadata."""
     return pd.read_csv(path, dtype={"notes":"str"})
 
 def read_data(path="./data", 
@@ -55,11 +59,12 @@ def read_data(path="./data",
 
         sr, data = scipy.io.wavfile.read(f"{path}/{row.idx}.wav")
         if sr != sample_rate:
-            raise(f"Samplerate of {row.idx}.wav is {sr} instead of {sample_rate}")
+            raise(f"Sample rate of {row.idx}.wav is {sr} instead of {sample_rate}")
         
         if len(data) < req_inputlength:
             raise(f"File {row.idx}.wav is not long enough")
 
+        # Centering the data block within the available data
         start_of_block = int(sample_rate * offset_s)
         data_block1 = data[start_of_block:start_of_block+req_inputlength, 1]
         data_block2 = data[start_of_block:start_of_block+req_inputlength, 2]
@@ -83,7 +88,7 @@ def read_data(path="./data",
         X4 = X4 / np.max(np.abs(X4))
 
     if apply_fft:
-        print("applying FFT")
+        print("Applying FFT")
         X1 = np.abs(np.fft.rfft(X1))
         X2 = np.abs(np.fft.rfft(X2))
         X3 = np.abs(np.fft.rfft(X3))
@@ -94,6 +99,20 @@ def read_data(path="./data",
 
 
 def k_fold_split(X, y, k_fold=5, seed=0):
+    """Splits the data into k sets of the same size, while
+    making sure that data belonging to the same pose ends up
+    in the same set (to avoid mixing training and test data).
+    
+    Parameters:
+    X: Data of dimension (samples, length, channels)
+    y: labels of dimension (samples, 2)
+    k_fold: into how many sets the data is split
+    seed: seed used for shufflling the indizes
+    
+    Output:
+    X_split: List of k-flod many arrays containing data from X
+    y_split: List of k-fold many arrays containing labels from y
+    """
     rng = np.random.default_rng(seed)
     shuffeled_idxs = np.unique(y[:,0])[:-1] # remove nan
     rng.shuffle(shuffeled_idxs)
@@ -109,6 +128,23 @@ def k_fold_split(X, y, k_fold=5, seed=0):
 
 
 def k_fold_iter(X, y, k_fold=5, seed=0, val_set_size=0):
+    """Provides an iterator going through the data which
+    returns a train, test and if needed validation set.
+    
+    Parameters:
+    X: Data of dimension (samples, length, channels)
+    y: labels of dimension (samples, 2)
+    k_fold: into how many sets the data is split
+    seed: seed used for shufflling the indizes
+    val_set_size: Size of the validation set, if 0 no set is used
+    
+    If val_set_size > 0 this provides an iterator returning
+    (X_train, y_train, X_val, y_val, X_test, y_test) and
+    otherwise (X_train, y_train, X_test, y_test) where
+    X_test, y_test always consist of one block, X_val, y_val
+    consists of val_set_size blocks and X_train, y_train consists
+    of k_fold - val_set_size - 1 blocks.
+    """
     X_split, y_split = k_fold_split(X, y, k_fold, seed)
     for i in range(k_fold-val_set_size):
         train_X = np.concatenate(X_split[:i]+X_split[i+val_set_size+1:], axis=0)
