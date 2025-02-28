@@ -6,9 +6,9 @@ on that data.
 Finally, the results folder contains the outputs of the model-comparison script 
 on the four datasets we collected (different microphone positions) as well as some notebooks 
 showing examples of how to compare them.
-Additional experiments we conducted can be found in the other-experiemtns folder. Those are not nessecary
+Additional experiments we conducted can be found in the other-experiments folder. Those are not necessary
 to understand our main results. While they might provide additional insight, we can't guarantee that all
-of them work with the listed requierements (for example because they contain syntax from python >= 3.10).
+of them work with the listed requirements (for example because they contain syntax from python >= 3.10).
 
 ## Prerequisites
 This project requires a Python version less than 3.10.
