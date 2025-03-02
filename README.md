@@ -96,9 +96,9 @@ The data_utils.py script provides functions to load data and perform a train-tes
 results to a csv file.
 
 
-## Detailed Analysis
-For further analysis on our data or earlier experiments, have a look at the detailed-analysis folder,
-However, you do not need these scripts for the program to work. Our most important results are in the results folder.
+## Further Experiments
+For further analysis on our data or earlier experiments, have a look at the other-experiments folder.
+However, you do not need these scripts for the program to work and our most important results are in the results folder.
 
 ## Datasets
 You can find our collected data in this [folder](https://tubcloud.tu-berlin.de/s/3YSTCpWXXaTaM9S).
